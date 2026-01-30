@@ -35,3 +35,7 @@ output.txt
 
 # Logs
 *.log
+
+# Audio files (too large for git)
+Audios/*.wav
+*.wav
