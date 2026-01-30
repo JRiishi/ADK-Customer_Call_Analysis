@@ -1,0 +1,380 @@
+text,label
+"The refund was processed faster than I expected, thank you.",positive
+"I have received the replacement and it works perfectly now.",positive
+"Your agent was incredibly patient and solved everything.",positive
+"I'm so relieved this billing error was corrected promptly.",positive
+"The delivery arrived early and in perfect condition.",positive
+"Thanks for the clear instructions, I got my app working.",positive
+"Excellent service, my subscription issue was fixed in minutes.",positive
+"The support team went above and beyond my expectations.",positive
+"My account access was restored quickly after the call.",positive
+"I appreciate the proactive update on my service ticket.",positive
+"The technical guide you provided resolved my problem completely.",positive
+"Very happy with how the complaint was handled.",positive
+"The credit was applied to my account immediately, thank you.",positive
+"Your representative was knowledgeable and very courteous.",positive
+"The problem is fully resolved and I'm satisfied with the outcome.",positive
+"I've finally received the correct item after the mix-up.",positive
+"The wait time was short and the agent was fantastic.",positive
+"My order was corrected and I received a discount for the trouble.",positive
+"Everything is working as it should now, I'm grateful.",positive
+"The follow-up email confirming the fix was a nice touch.",positive
+"I am waiting to hear back about the escalation.",negative
+"The agent said they would call me back within an hour.",negative
+"My request is still pending approval from the finance team.",negative
+"I was told the update would be applied in 24-48 hours.",negative
+"The ticket has been created and assigned to a specialist.",negative
+"They are checking the logs to see what caused the error.",negative
+"I have submitted the required documents for verification.",negative
+"The replacement part has been ordered but not yet shipped.",negative
+"We are currently reviewing the footage from the delivery.",negative
+"The system shows the refund as initiated but not completed.",negative
+"I'm on hold waiting to speak to a supervisor.",negative
+"The case is with our escalation department for further review.",negative
+"Your feedback has been logged for the product team.",negative
+"I've followed the steps but haven't seen a change yet.",negative
+"The partial credit was issued, and I'm awaiting the remainder.",negative
+"The delivery is scheduled, but I haven't received a tracking number.",negative
+"The issue is intermittent, so it's hard to reproduce.",negative
+"I'm still deciding if I want to proceed with the warranty claim.",negative
+"They offered a discount, but I need to check my bill first.",negative
+"The agent provided some steps, and I will try them later.",negative
+"The problem was partially fixed, but a minor glitch remains.",negative
+"I have not yet received the confirmation email you mentioned.",negative
+"The status page indicates maintenance is in progress.",negative
+"We are awaiting stock for the item you requested.",negative
+"My case is in a queue for the next available agent.",negative
+"The investigation into the overcharge is ongoing.",negative
+"I need to verify some details on my account before proceeding.",negative
+"The new feature was enabled, but I haven't tested it fully.",negative
+"The courier has picked up the return package.",negative
+"The payment method was updated, though the old one still shows.",negative
+"I have been on hold for over forty-five minutes now.",negative
+"The refund was promised last week and still isn't here.",negative
+"This is the third time I've called about the same problem.",negative
+"The agent was unable to resolve my billing discrepancy.",negative
+"I am disappointed with the lack of progress on my case.",negative
+"The product stopped working again after the so-called fix.",negative
+"I have yet to receive any update on my service outage.",negative
+"The delivery was delayed for the fourth time without notice.",negative
+"Your system continues to charge me after I canceled.",negative
+"I am politely requesting a manager as this is unresolved.",negative
+"The solution provided did not address the core issue.",negative
+"I was transferred three times and now I'm disconnected.",negative
+"This level of service is not what I expected from your company.",negative
+"My complaint has been open for two weeks with no resolution.",negative
+"The app update made the problem worse, not better.",negative
+"I am frustrated by the contradictory information I've received.",negative
+"The technician never arrived during the scheduled window.",negative
+"I am still being billed for a service I no longer have.",negative
+"The replacement device you sent is also defective.",negative
+"This has caused significant inconvenience for my business.",negative
+"Your website said it was in stock, but my order was canceled.",negative
+"The credit card charge is still pending from a month ago.",negative
+"I followed all troubleshooting steps to no avail.",negative
+"The automated system cannot understand my issue.",negative
+"I have not received a single callback as promised.",negative
+"The packaging was damaged and the item inside is broken.",negative
+"I am unhappy with the quality of the support I received.",negative
+"The fee was applied incorrectly and no one can remove it.",negative
+"The tracking information has not updated in five days.",negative
+"The serial number on the product does not match the invoice.",negative
+"I'm calling to follow up as I've heard nothing back.",negative
+"The agent submitted the form but couldn't give me a timeline.",negative
+"I'm checking my bank to see if the refund has posted.",negative
+"The app is functioning, though some features are slower.",negative
+"The issue is documented and awaiting a software patch.",negative
+"They said they would email me the instructions.",negative
+"I have escalated the ticket but haven't received a response yet.",negative
+"The charge is under review by our billing department.",negative
+"I'm waiting for the courier to provide a delivery estimate.",negative
+"The specialist is out of office until Monday.",negative
+"I've reset my password, but haven't tried logging in yet.",negative
+"The order is processed but not yet shipped from the warehouse.",negative
+"They offered a solution, but I need to review the terms.",negative
+"The previous agent said one thing, and this one says another.",negative
+"I'm on the callback list for when a supervisor is free.",negative
+"The service was restored, but the cause is unknown.",negative
+"I provided my address, but the confirmation hasn't come through.",negative
+"The partial refund is showing as pending in my account.",negative
+"They are checking if the promotion applies to my plan.",negative
+"The case notes indicate a previous attempt was made.",negative
+"Thank you for the prompt resolution to my connectivity issue.",positive
+"The courtesy discount for the inconvenience was much appreciated.",positive
+"Everything is sorted now, and the service is excellent.",positive
+"My order arrived today and it's exactly what I wanted.",positive
+"The agent calmly talked me through the fix, and it worked.",positive
+"I'm impressed with how quickly you handled my return request.",positive
+"The compensation for the delayed flight was more than fair.",positive
+"All my features are now active and working beautifully.",positive
+"Your support staff turned a frustrating situation around.",positive
+"I can finally access my account, thank you for your help.",positive
+"The installation went smoothly with the guide you sent.",positive
+"I'm very pleased that the faulty part was replaced overnight.",positive
+"The issue is completely resolved to my satisfaction.",positive
+"Kudos to the team for the efficient and friendly service.",positive
+"My subscription was reinstated correctly, and I'm happy.",positive
+"The gift card for the trouble was a pleasant surprise.",positive
+"The product is now performing as advertised, thank you.",positive
+"I received a personal apology from the manager, which I value.",positive
+"All charges have been reversed, and I am content.",positive
+"The expedited shipping got my package here in time.",positive
+"I need to confirm the appointment time you mentioned.",negative
+"The system is updating, so I can't check the status right now.",negative
+"I'm holding while you pull up my account information.",negative
+"They are verifying my identity before proceeding.",negative
+"The engineer is scheduled, but I need to confirm the date.",negative
+"I was told the issue is known and a fix is being developed.",negative
+"My request is in the queue for manual processing.",negative
+"I have a case number but haven't been contacted yet.",negative
+"The automatic payment failed, and I'm not sure why.",negative
+"I'm waiting for the results of the diagnostic test.",negative
+"The order is showing as 'processing' with no other details.",negative
+"I was transferred to the wrong department initially.",negative
+"They are checking the availability for an earlier slot.",negative
+"I provided feedback via the survey you sent.",negative
+"The credit will appear in 3-5 business days, they said.",negative
+"I'm waiting for my spouse to confirm the service details.",negative
+"The agent is checking the policy terms for my situation.",negative
+"The delivery was attempted, but I wasn't home.",negative
+"The software is installed but requires a restart.",negative
+"I've agreed to the replacement, pending the return label.",negative
+"I have been charged for a premium feature I never ordered.",negative
+"The response I got was a generic copy-paste that didn't help.",negative
+"I've lost access to critical data due to this outage.",negative
+"This is unacceptable for a customer of ten years.",negative
+"The technician left without completing the repair.",negative
+"I am writing to formally dispute this charge on my invoice.",negative
+"The delivery instructions were ignored completely.",negative
+"Your automated phone system is impossible to navigate.",negative
+"I've had to repeat my issue to four different people.",negative
+"The product quality is far below what was advertised.",negative
+"I am extremely dissatisfied with how this was handled.",negative
+"My account was locked without any warning or explanation.",negative
+"The refund process is needlessly complicated and slow.",negative
+"I was overcharged, and the correction still hasn't come.",negative
+"The service interruption has cost me an entire workday.",negative
+"The item I returned was received but my refund wasn't processed.",negative
+"Your representative hung up on me during the call.",negative
+"The warranty claim was denied for a bogus reason.",negative
+"I've submitted the form three times and it keeps erroring.",negative
+"The promised callback never happened.",negative
+"The solution you provided is not a viable long-term fix.",negative
+"I have mixed feelings about the compensation offered.",negative
+"Part of the order was correct, but one item was missing.",negative
+"The call dropped, so I'm not sure if the request went through.",negative
+"They've acknowledged the bug but can't say when it'll be fixed.",negative
+"The fee was waived, though I'm not happy about the hassle.",negative
+"The delivery arrived, but the packaging was slightly torn.",negative
+"I'm satisfied with the resolution but not with the time it took.",negative
+"The agent was polite, but couldn't answer my specific question.",negative
+"I received a discount, though the initial error was yours.",negative
+"The app is working, but the interface is now less intuitive.",negative
+"The issue is fixed on my phone but not on my tablet.",negative
+"They sent a replacement, but it's a different model.",negative
+"The refund is pending, so I'll wait before commenting further.",negative
+"I'm pleased they apologized, but the problem still exists.",negative
+"The service was restored, though the speed seems lower.",negative
+"The charge was corrected, but the statement is confusing.",negative
+"They extended my subscription by a month as a courtesy.",negative
+"I got the information I needed, but it took three calls.",negative
+"The product works, but the setup instructions were poor.",negative
+"That was incredibly helpful, thank you for your expertise.",positive
+"You've saved me a lot of time and stress, I appreciate it.",positive
+"The resolution was fair and implemented immediately.",positive
+"I'm delighted with the quick and effective support.",positive
+"My problem is solved and I'm a happy customer.",positive
+"Thanks for turning a negative experience into a positive one.",positive
+"The agent's knowledge and attitude were outstanding.",positive
+"I will definitely continue using your service after this.",positive
+"Everything is perfect now, I have no further complaints.",positive
+"I'm very satisfied with the outcome of my support request.",positive
+"The fix worked perfectly and my data is intact.",positive
+"I appreciate the transparency throughout the process.",positive
+"The compensation was generous and restored my faith.",positive
+"I got exactly what I needed, quickly and politely.",positive
+"The follow-up to ensure I was happy was a classy move.",positive
+"All my concerns were addressed fully and promptly.",positive
+"The service recovery after the initial error was impressive.",positive
+"I've recommended your support team to my colleagues.",positive
+"Thank you for the seamless and stress-free resolution.",positive
+"I am completely satisfied and consider the matter closed.",positive
+"I'm calling back because I didn't get the email with details.",negative
+"The status is still showing as 'in progress' on my end.",negative
+"I need to confirm you have the correct shipping address on file.",negative
+"I was told I'd get a text notification, but I haven't.",negative
+"The agent said they'd note my account about the preference.",negative
+"I'm waiting for the system to generate the return authorization.",negative
+"The payment is showing as processed on your side, but not mine.",negative
+"I've been given a reference number for the escalation.",negative
+"The specialist is reviewing the case history before calling.",negative
+"They are checking to see if the coupon code should have applied.",negative
+"I'm holding for an update from the logistics team.",negative
+"The order is packed, but awaiting carrier pickup.",negative
+"I provided the serial number and am awaiting next steps.",negative
+"The app is logged out and I need the verification code.",negative
+"They said the update would roll out by end of day.",negative
+"I'm on the line while you check the latest policy update.",negative
+"The previous ticket was closed, so I had to open a new one.",negative
+"I'm waiting for the second factor authentication to reset.",negative
+"The chargeback is being investigated by the disputes team.",negative
+"The product is with quality control for assessment.",negative
+"This is now the fifth time I've explained this problem.",negative
+"I am beyond frustrated with the complete lack of resolution.",negative
+"The agent contradicted what your website clearly states.",negative
+"I have been patient, but my patience has run out.",negative
+"The service interruption is ongoing with no ETA for a fix.",negative
+"I was charged a cancellation fee for a service I never started.",negative
+"The product arrived damaged and customer service is unresponsive.",negative
+"This experience has been a total waste of my time.",negative
+"I am formally requesting a full refund and closing my account.",negative
+"The technician installed the wrong part entirely.",negative
+"Your company's error has caused me a significant financial loss.",negative
+"I have recorded the call for my records due to this dispute.",negative
+"The promised manager callback never materialized.",negative
+"I am deeply disappointed in the quality of your product.",negative
+"The refund was denied without a valid explanation.",negative
+"My data was lost due to your failed system migration.",negative
+"I have been billed for three months of a free trial.",negative
+"The delivery was left in the rain and destroyed.",negative
+"I've had to seek external help to solve your company's mistake.",negative
+"The level of incompetence I've encountered is astonishing.",negative
+"I'm satisfied that the agent understood my complex issue.",positive
+"The replacement arrived ahead of schedule and works great.",positive
+"Thank you for the hassle-free return and prompt refund.",positive
+"The issue was resolved in one call, which I appreciate.",positive
+"I'm very happy with the corrective action taken.",positive
+"The support experience was professional and effective.",positive
+"All my features are restored and functioning better than before.",positive
+"The compensation for the delay was more than satisfactory.",positive
+"My faith in your company has been fully restored.",positive
+"The agent's solution was simple and effective, thank you.",positive
+"The proactive notification about the issue was appreciated.",positive
+"I'm grateful for the personal attention to my case.",positive
+"The problem is fixed and I have no further issues.",positive
+"The refund hit my account this morning, thank you.",positive
+"Your team handled a sensitive billing issue with care.",positive
+"I am pleased to report the service is now excellent.",positive
+"The quick resolution has made me a loyal customer.",positive
+"Everything was sorted to my complete satisfaction.",positive
+"The agent was empathetic and found a perfect solution.",positive
+"I have to check my calendar before I can reschedule.",negative
+"The notes say the part is back-ordered for two weeks.",negative
+"I'm waiting for authorization to proceed with the repair.",negative
+"The ticket was updated, but the change isn't visible to me.",negative
+"They are running a diagnostic from their side.",negative
+"I was told the email with instructions may have gone to spam.",negative
+"The system is undergoing maintenance, so access is limited.",negative
+"I need to verify the last four digits of my card for security.",negative
+"The case is pending input from another department.",negative
+"I'm on a callback list for when the next batch is processed.",negative
+"The delivery is out for delivery with the usual carrier.",negative
+"They are checking the compatibility with my device model.",negative
+"I've accepted the replacement, pending the shipping details.",negative
+"The charge is being investigated as a possible duplicate.",negative
+"I'm waiting for the activation code to come through.",negative
+"The app is downloading the update now.",negative
+"The agent is reviewing the chat history from my last contact.",negative
+"They said they would send a link to reset my preferences.",negative
+"The order is with the shipping partner for final mile delivery.",negative
+"I'm holding while you conference in the billing specialist.",negative
+"I am deeply unsatisfied with the resolution offered.",negative
+"This has been the worst customer service experience I've had.",negative
+"The product failed within a week and your support is absent.",negative
+"I was given incorrect information that cost me money.",negative
+"The agent was rude and cut me off mid-sentence.",negative
+"My account was compromised due to a vulnerability on your end.",negative
+"The repair didn't last 24 hours before failing again.",negative
+"I have filed a complaint with the relevant consumer agency.",negative
+"The package was marked delivered but I never received it.",negative
+"You have charged me for an annual plan I explicitly declined.",negative
+"The wait time is unreasonable for a paying customer.",negative
+"The software bug you deny exists has been documented online.",negative
+"I am appalled by the lack of accountability shown.",negative
+"The service agreement was violated by your company.",negative
+"I have been without the service I pay for for over a week.",negative
+"The representative refused to escalate my legitimate concern.",negative
+"The product is defective and your return process is obstructive.",negative
+"I've spent hours trying to fix a problem caused by your update.",negative
+"The initial response was an automated dismissal of my issue.",negative
+"I am considering legal action over this unresolved matter.",negative
+"I'm neutral on the outcome as I'm still evaluating the fix.",negative
+"The agent said the system would update by tomorrow morning.",negative
+"I'm waiting for the vendor to respond to the warranty query.",negative
+"The payment is in a pending state on both our systems.",negative
+"I've received the package but haven't opened it yet.",negative
+"The service is working, though I haven't tested all functions.",negative
+"They are sending a technician, but the time slot is wide.",negative
+"I'm satisfied with the apology but awaiting the actual fix.",negative
+"The discount was applied to the next bill, not the current one.",negative
+"I'm on hold while you check the inventory at another location.",negative
+"The case was closed prematurely, so I reopened it.",negative
+"The instructions were unclear, so I haven't attempted them.",negative
+"I'm waiting for my colleague to provide the necessary details.",negative
+"The app crashed once but seems okay after a reinstall.",negative
+"They acknowledged the delay and are investigating the cause.",negative
+"The refund is showing as initiated with a 5-day window.",negative
+"I'm waiting for the compliance team to approve the exception.",negative
+"The product is connected, but the setup isn't fully complete.",negative
+"The agent is checking if a senior engineer is available.",negative
+"I received an update, but it didn't address my specific question.",negative
+"Thank you for the exceptional service and quick turnaround.",positive
+"I'm thoroughly impressed and happy with the support provided.",positive
+"The issue is resolved and I'm a very satisfied customer.",positive
+"Your team's efficiency turned my frustration into gratitude.",positive
+"I received the correct item and the apology gift card.",positive
+"Everything is working perfectly now, thank you so much.",positive
+"The agent was fantastic and solved my issue in minutes.",positive
+"I'm delighted with the outcome and the way I was treated.",positive
+"The problem was fixed faster than I could have hoped.",positive
+"I am completely happy and have no further complaints.",positive
+"The support I received was top-notch and very effective.",positive
+"My subscription issue was resolved kindly and quickly.",positive
+"I appreciate the extra mile your representative went for me.",positive
+"The billing error was corrected promptly and politely.",positive
+"I'm very pleased with the service recovery after the mistake.",positive
+"All charges were removed and my account is in good standing.",positive
+"The delivery issue was resolved and I got a discount.",positive
+"Your customer service has exceeded my expectations.",positive
+"I am content and consider the matter successfully closed.",positive
+"The technical support was excellent and solved my problem.",positive
+"I am following up as I haven't seen any change on my account.",negative
+"The agent is looking into why the promotion didn't auto-apply.",negative
+"I'm waiting for the email with the survey link you mentioned.",negative
+"The system shows the order as completed on your side.",negative
+"I was told the update is rolling out in phases.",negative
+"I need to verify the installation with my IT person first.",negative
+"The case is with the development team for a code review.",negative
+"I'm holding for an update from the network operations center.",negative
+"They are checking the warranty start date on my product.",negative
+"The payment gateway is reporting a temporary issue.",negative
+"I've submitted the support ticket but haven't gotten a number.",negative
+"The delivery is scheduled, but the weather may cause delay.",negative
+"The agent is reading through the previous correspondence.",negative
+"I'm waiting for the results of the credit check to proceed.",negative
+"The feature is enabled, but I need to configure it myself.",negative
+"They said they'd call back after speaking to the supplier.",negative
+"The return is in transit back to your returns center.",negative
+"I'm on a brief hold while you pull up the service manual.",negative
+"The issue is logged and prioritized as medium severity.",negative
+"I need to confirm the total refund amount including tax.",negative
+"I am extremely unsatisfied and will be taking my business elsewhere.",negative
+"The agent was dismissive and unhelpful throughout the call.",negative
+"This recurring billing error shows systemic problems.",negative
+"I have lost all trust in your company's ability to deliver.",negative
+"The product is unusable and your support is non-existent.",negative
+"I was charged a restocking fee for a defective item.",negative
+"The delivery was a week late with no compensation offered.",negative
+"Your failure to resolve this has caused me real hardship.",negative
+"The promised compensation never appeared on my statement.",negative
+"I have been misled about the capabilities of your service.",negative
+"The technician no-showed without any notification.",negative
+"I am writing to express my profound disappointment.",negative
+"The refund process is deliberately obstructive, I believe.",negative
+"My account was suspended without due process or warning.",negative
+"The service has been down for 48 hours with no ETA.",negative
+"The replacement you sent is the wrong color and model.",negative
+"I've been overcharged for months and just noticed.",negative
+"The agent admitted the fault was yours but offered no remedy.",negative
+"This is the last time I will attempt to contact support.",negative
+"I am filing a formal grievance over this treatment.",negative

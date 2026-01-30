@@ -1,0 +1,7 @@
+tensorflow>=2.13.0
+keras>=2.13.0
+google-generativeai
+SpeechRecognition>=3.10.0
+pydub>=0.25.1
+numpy>=1.24.0
+pandas>=2.0.0
