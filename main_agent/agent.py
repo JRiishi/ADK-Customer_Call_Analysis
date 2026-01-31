@@ -1,7 +1,10 @@
 from google.adk.agents.llm_agent import Agent
+from llm_adapters.bedrock_llm import BedrockClaudeLLM
+
+bedrock_model = BedrockClaudeLLM()
 
 main_agent = Agent(
-    model='gemini-2.5-flash',
+  model=bedrock_model,
     name='main_orchestrator_agent',
     description='Coordinates multiple specialized agents to analyze customer feedback following strict execution order.',
     instruction="""

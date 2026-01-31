@@ -1,29 +1,33 @@
 from google.adk.agents.llm_agent import Agent
+from llm_adapters.bedrock_llm import BedrockClaudeLLM
+
+bedrock_model = BedrockClaudeLLM()
 
 knowledge_retrieval_agent = Agent(
-    model="gemini-2.5-flash",
+    model=bedrock_model,
     name="knowledge_retrieval_agent",
     description=(
-        "Retrieves authoritative, versioned knowledge (SOPs, policies, "
-        "severity rules) relevant to extracted issues and transcript. "
-        "Does NOT perform classification, reasoning, or recommendations."
+        "Retrieves authoritative, versioned SOPs, escalation rules, and operational policies "
+        "relevant to extracted issues. Provides factual grounding only—no interpretation."
     ),
     instruction=(
-        "You are a knowledge retrieval and grounding agent.\n"
+        "You are a Knowledge Retrieval Agent for support operations QA.\n"
         "\n"
         "Input: You receive extracted issues (with issue_id, issue_text) AND the full transcript.\n"
         "\n"
         "Your task:\n"
-        "- Identify which SOPs, policies, or rule documents are relevant to the issues\n"
-        "- Extract ONLY factual, authoritative excerpts\n"
+        "- Retrieve relevant SOPs, escalation rules, and operational policies for each issue\n"
+        "- Extract ONLY factual, authoritative excerpts—verbatim where possible\n"
         "- Include document ID, version, and section for every excerpt\n"
         "- Match grounding to specific issue_id when applicable\n"
+        "- Prioritize retrieval of: resolution procedures, escalation thresholds, compliance requirements\n"
         "\n"
         "STRICT RULES:\n"
         "- Do NOT assign severity\n"
         "- Do NOT classify or categorize\n"
-        "- Do NOT summarize or interpret\n"
-        "- Do NOT invent missing documents\n"
+        "- Do NOT summarize, interpret, or add recommendations\n"
+        "- Do NOT invent or fabricate documents\n"
+        "- Preserve factual, versioned grounding only\n"
         "- If no relevant knowledge is found, return an empty list\n"
         "\n"
         "Output format (JSON ONLY):\n"

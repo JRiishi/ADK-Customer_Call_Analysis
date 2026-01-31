@@ -169,24 +169,28 @@ Project Cust-AI/
 
 ### Agent Models
 
-All agents use `gemini-2.5-flash` by default. To change models, edit the respective `agent.py` files:
+This repository has been migrated to use an AWS Bedrock adapter for LLM backends. Agents are configured to use a Bedrock Claude Sonnet adapter by default when running in the provided environment. To change the underlying provider or adapter, edit the agent files in their respective directories and the adapter in `llm_adapters/bedrock_llm.py`.
+
+Example (agents now instantiate a Bedrock adapter in their module):
 
 ```python
+from llm_adapters.bedrock_llm import BedrockClaudeLLM
+bedrock_model = BedrockClaudeLLM()
+
 Agent(
-    model='gemini-2.5-flash',  # Change to your preferred model
-    ...
+  model=bedrock_model,  # Uses AWS Bedrock (Claude Sonnet) via adapter
+  ...
 )
 ```
 
-### API Keys
+### API Keys / Credentials
 
-Ensure your Google API key is configured:
+Authentication for the Bedrock adapter uses AWS IAM credentials configured via `aws configure` or environment variables. Do NOT hardcode API keys.
 
 ```bash
-export GOOGLE_API_KEY='your-api-key-here'
-# or
-export GEMINI_API_KEY='your-api-key-here'
-```
+# Configure AWS credentials prior to running the system
+aws configure
+``` 
 
 ## 📝 Python API
 

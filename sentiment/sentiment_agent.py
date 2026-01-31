@@ -1,13 +1,16 @@
 from google.adk.agents.llm_agent import Agent
+from llm_adapters.bedrock_llm import BedrockClaudeLLM
+
+bedrock_model = BedrockClaudeLLM()
 
 sentiment_analysis_agent = Agent(
-    model="gemini-2.5-flash",
+  model=bedrock_model,
     name="sentiment_analysis_agent",
-    description="Analyzes customer sentiment from transcript text using ML model and returns sentiment score, label, and confidence.",
+    description="Analyzes customer sentiment from transcript text using ML model. Outputs sentiment as a churn/escalation risk indicator.",
     instruction="""
-You are a Sentiment Analysis Agent.
+You are a Sentiment Analysis Agent for support operations QA.
 
-Your responsibility is to analyze the emotional tone of customer text transcripts using the pre-trained sentiment ML model.
+Your responsibility is to analyze the emotional tone of customer call transcripts using the pre-trained sentiment ML model. Sentiment serves as a risk indicator for churn and escalation—not a customer happiness score.
 
 Tasks:
 - Determine sentiment: Positive, Negative, or Neutral
@@ -18,7 +21,7 @@ STRICT RULES:
 - Do NOT extract issues (that's the Issue Extraction Agent's job)
 - Do NOT classify into service categories (that's the Classification Agent's job)
 - Do NOT assign severity (that's the Validation Agent's job)
-- Focus ONLY on emotional tone analysis
+- Focus ONLY on tone analysis as a risk signal
 
 Always return output strictly in JSON format:
 

@@ -1,14 +1,17 @@
 from google.adk.agents.llm_agent import Agent
+from llm_adapters.bedrock_llm import BedrockClaudeLLM
+
+bedrock_model = BedrockClaudeLLM()
 
 severity_validation_agent = Agent(
-    model="gemini-2.5-flash",
+    model=bedrock_model,
     name="severity_validation_agent",
     description=(
         "FINAL AUTHORITY for issue severity. Validates proposed severity using "
-        "predefined rubric and grounded SOP knowledge. Ensures consistent and explainable severity."
+        "predefined rubric and grounded SOP knowledge. Single source of truth for severity."
     ),
     instruction=(
-        "You are the FINAL AUTHORITY for severity validation.\n"
+        "You are the FINAL AUTHORITY for severity validation in support operations QA.\n"
         "\n"
         "You will receive:\n"
         "- Issue description (issue_id, issue_text)\n"
@@ -18,19 +21,20 @@ severity_validation_agent = Agent(
         "\n"
         "Your task:\n"
         "- Validate the proposed severity using the severity rubric below\n"
-        "- Correct the severity if it violates the rules\n"
-        "- Justify the FINAL severity using grounding context\n"
+        "- Correct the severity if it violates the rubric or grounding context\n"
+        "- Justify the FINAL severity based on: operational risk, revenue impact, or escalation load\n"
+        "- Do NOT justify severity based on emotional intensity\n"
         "- Your output is the FINAL severity used by the system\n"
         "\n"
         "Severity Rubric (1-5 integer scale):\n"
-        "1 = Minor inconvenience, no repetition\n"
-        "2 = Repeated issue, no financial impact\n"
-        "3 = Service degradation, temporary impact\n"
-        "4 = Revenue loss, payment failure, trust impact\n"
-        "5 = Legal risk, mass outage, churn threat\n"
+        "1 = Minor inconvenience, no repetition, no operational impact\n"
+        "2 = Repeated issue, no financial impact, low escalation risk\n"
+        "3 = Service degradation, temporary operational impact\n"
+        "4 = Revenue loss, payment failure, trust impact, escalation required\n"
+        "5 = Legal risk, mass outage, churn threat, critical escalation\n"
         "\n"
         "STRICT RULES:\n"
-        "- You are the FINAL AUTHORITY - your severity is definitive\n"
+        "- You are the SINGLE SOURCE OF TRUTH for severity—your value is definitive\n"
         "- Do NOT invent new severity rules\n"
         "- Do NOT ignore grounding context\n"
         "- If grounding context contradicts the proposed severity, correct it\n"
