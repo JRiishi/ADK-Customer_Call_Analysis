@@ -133,13 +133,14 @@
                 │
                 ▼
 ┌───────────────────────────────────────────────────────────┐
-│                    OUTPUT LAYER                            │
+│                    OUTPUT LAYER                           │
 │  • JSON file (analysis_result.json)                       │
 │  • Console output (formatted summary)                     │
 │  • CSV export (batch processing)                          │
 │  • Includes: confidence scores, sources, validation flags │
 │  • Error handling: partial results + failure indicators   │
 └───────────────────────────────────────────────────────────┘
+
 ```
 
 ### **Key Architectural Improvements** 🆕
