@@ -45,6 +45,12 @@ async def startup_db():
     logger.info("-" * 70)
     
     db.connect()
+    try:
+        # Ping the database to verify connection
+        await db.client.admin.command('ping')
+        logger.info("✅ MongoDB Connection Verified (Ping Successful)")
+    except Exception as e:
+        logger.error(f"❌ MongoDB Connection Failed: {e}")
     
     # Initialize the LLM Gateway (this will log its status)
     from app.core.llm.gateway import bedrock_gateway

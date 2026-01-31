@@ -77,9 +77,7 @@ const AgentConsole = () => {
         formData.append('agent_id', agentId);
 
         try {
-            const res = await axios.post('http://localhost:8000/api/v1/analysis/upload', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
+            const res = await axios.post('http://localhost:8000/api/v1/analysis/upload', formData);
 
             // Navigate to results after a short delay for background processing
             setTimeout(() => {

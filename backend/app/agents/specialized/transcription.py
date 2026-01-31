@@ -10,14 +10,28 @@ logger = logging.getLogger("TRANSCRIPTION_AGENT")
 _whisper_model = None
 
 def _get_whisper_model():
-    """Lazy-load and cache the Whisper model to avoid reloading"""
+    """Lazy-load and cache the Whisper MEDIUM model optimized for Hindi/Indian on Apple Silicon"""
     global _whisper_model
     if _whisper_model is None:
         try:
+            import ssl
+            ssl._create_default_https_context = ssl._create_unverified_context
+            
             import whisper
-            logger.info("🔄 [TRANSCRIPTION] Loading Whisper model (medium)...")
-            _whisper_model = whisper.load_model("medium")
-            logger.info("✅ [TRANSCRIPTION] Whisper model loaded successfully")
+            import torch
+            
+            # MEDIUM model - best balance of speed and accuracy
+            model_name = "medium"
+            
+            if torch.backends.mps.is_available():
+                device = "mps"
+                logger.info(f"🔄 [TRANSCRIPTION] Loading Whisper {model_name} on Apple Silicon GPU (MPS)...")
+            else:
+                device = "cpu"
+                logger.info(f"🔄 [TRANSCRIPTION] Loading Whisper {model_name} on CPU...")
+            
+            _whisper_model = whisper.load_model(model_name, device=device)
+            logger.info(f"✅ [TRANSCRIPTION] Whisper {model_name} loaded successfully on {device}")
         except ImportError:
             logger.error("❌ [TRANSCRIPTION] Whisper not installed! Run: pip install openai-whisper")
             _whisper_model = None
@@ -34,7 +48,6 @@ class TranscriptionAgent(BaseAgent):
             role="You are an expert audio transcription system."
         )
         logger.info("🎤 Transcription Agent initialized")
-        # Try to pre-load model in background
         try:
             import threading
             threading.Thread(target=_get_whisper_model, daemon=True).start()
@@ -42,16 +55,11 @@ class TranscriptionAgent(BaseAgent):
             pass
 
     async def run(self, audio_path: str) -> Dict[str, Any]:
-        """
-        Transcribe audio file using OpenAI Whisper.
-        Falls back to intelligent sample if Whisper unavailable.
-        """
         logger.info("=" * 60)
         logger.info(f"🎤 [TRANSCRIPTION] Starting transcription")
         logger.info(f"📁 [TRANSCRIPTION] File: {audio_path}")
         logger.info("=" * 60)
         
-        # Check if file exists
         if not os.path.exists(audio_path):
             logger.error(f"❌ [TRANSCRIPTION] File not found: {audio_path}")
             return {
@@ -64,72 +72,94 @@ class TranscriptionAgent(BaseAgent):
             }
         
         file_size = os.path.getsize(audio_path)
-        logger.info(f"📏 [TRANSCRIPTION] File size: {file_size} bytes ({file_size/1024:.1f} KB)")
+        logger.info(f"📏 [TRANSCRIPTION] File size: {file_size / 1024:.1f} KB")
         
-        # Try Whisper transcription - NO FALLBACK, REAL TRANSCRIPTION ONLY
         model = _get_whisper_model()
-        
         if model is None:
-            error_msg = "❌ Whisper model not loaded! Install with: pip install openai-whisper"
-            logger.error(f"❌ [TRANSCRIPTION] {error_msg}")
-            raise RuntimeError(error_msg)
-        
+            raise RuntimeError("Whisper model not loaded")
+
         try:
-            logger.info("🔄 [TRANSCRIPTION] Running Whisper transcription...")
-            
-            # Run transcription in thread pool to not block async
+            logger.info("🔄 [TRANSCRIPTION] Running Whisper MEDIUM (Hindi/Indian optimized)...")
             loop = asyncio.get_event_loop()
+
             result = await loop.run_in_executor(
                 None,
-                lambda: model.transcribe(audio_path, language="en", fp16=False)
+                lambda: model.transcribe(
+                    audio_path,
+                    
+                    # TRANSCRIBE (not translate) - keep original language
+                    task="transcribe",
+                    
+                    # FORCE HINDI - better than auto-detect for Indian audio
+                    language="hi",
+                    
+                    # Strong Hindi context prompt
+                    initial_prompt=(
+                        "यह एक कस्टमर सर्विस कॉल है। "
+                        "Hello, welcome. Driver ID. Battery Smart. OTP. "
+                        "Please tell me. Thank you. Sorry. Okay. Yes. No. "
+                        "Ji haan. Theek hai. Acha. Dhanyavaad. Namaskar."
+                    ),
+                    
+                    # OPTIMIZED SETTINGS FOR MEDIUM MODEL
+                    fp16=False,                         # MPS-safe
+                    
+                    # Temperature with fallback for noisy audio
+                    temperature=(0.0, 0.2, 0.4),
+                    
+                    # Beam search for accuracy
+                    beam_size=5,
+                    patience=1.0,
+                    
+                    # HALLUCINATION PREVENTION
+                    condition_on_previous_text=False,   # Prevents loops
+                    compression_ratio_threshold=2.4,    # Default - balanced
+                    no_speech_threshold=0.6,            # Good silence detection
+                    logprob_threshold=-1.0,             # Accept predictions
+                    
+                    word_timestamps=False,
+                    verbose=False
+                )
             )
-            
-            # Extract text from segments (same as reference script)
+
             segments = result.get("segments", [])
+            detected_language = result.get("language", "hi")
+            duration = result.get("duration", 0)
             
-            if not segments:
-                error_msg = "Transcription produced no segments"
-                logger.error(f"❌ [TRANSCRIPTION] {error_msg}")
-                raise RuntimeError(error_msg)
-            
+            logger.info(f"🌐 [TRANSCRIPTION] Detected language: {detected_language}")
             logger.info(f"📊 [TRANSCRIPTION] Found {len(segments)} segments")
             
-            # Build full text from segments with timestamps logged
+            if not segments:
+                raise RuntimeError("Transcription produced no segments")
+
+            # Build full text from segments
             text_parts = []
             for seg in segments:
-                start = seg.get('start', 0)
-                end = seg.get('end', 0)
-                text = seg.get('text', '').strip()
+                text = seg.get("text", "").strip()
                 if text:
                     text_parts.append(text)
-                    logger.info(f"[{start:.2f}s → {end:.2f}s] {text}")
-            
+                    if len(text_parts) <= 3:
+                        start = seg.get("start", 0)
+                        end = seg.get("end", 0)
+                        logger.info(f"   [{start:.1f}s-{end:.1f}s] {text[:100]}")
+
             full_text = " ".join(text_parts)
             
             if not full_text:
-                error_msg = "Transcription produced empty text"
-                logger.error(f"❌ [TRANSCRIPTION] {error_msg}")
-                raise RuntimeError(error_msg)
-            
-            duration = result.get("duration", 0)
-            language = result.get("language", "en")
-            
-            logger.info(f"✅ [TRANSCRIPTION] Whisper complete!")
-            logger.info(f"📝 [TRANSCRIPTION] Transcript length: {len(full_text)} chars")
-            logger.info(f"⏱️ [TRANSCRIPTION] Audio duration: {duration:.1f}s")
-            logger.info(f"🌐 [TRANSCRIPTION] Detected language: {language}")
+                raise RuntimeError("Empty transcription")
+
+            logger.info(f"✅ [TRANSCRIPTION] Complete! {len(full_text)} chars, {duration:.1f}s audio")
             logger.info("=" * 60)
-            
+
             return {
                 "text": full_text,
-                "language": language,
+                "language": detected_language,
                 "duration": duration,
-                "confidence": 0.95,
-                "source": "whisper",
+                "confidence": 0.90,
+                "source": "whisper-medium",
                 "segments": segments
             }
-            
+
         except Exception as e:
-            error_msg = f"Whisper transcription failed: {str(e)}"
-            logger.error(f"❌ [TRANSCRIPTION] {error_msg}")
-            raise RuntimeError(error_msg)
+            logger.error(f"❌ [TRANSCRIPTION] Whisper transcription failed: {e}")
+            raise

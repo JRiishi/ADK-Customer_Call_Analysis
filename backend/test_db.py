@@ -15,7 +15,13 @@ async def test_connection():
         return
 
     try:
-        client = AsyncIOMotorClient(uri)
+        import certifi
+        client = AsyncIOMotorClient(
+            uri,
+            tlsCAFile=certifi.where(),
+            tls=True,
+            tlsAllowInvalidCertificates=True
+        )
         # Force a network call
         info = await client.server_info()
         print(f"✅ Successfully connected to MongoDB version: {info.get('version')}")

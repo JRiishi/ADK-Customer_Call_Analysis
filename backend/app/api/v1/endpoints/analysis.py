@@ -1,12 +1,15 @@
-from fastapi import APIRouter, HTTPException, BackgroundTasks, UploadFile, File, Form
+from fastapi import APIRouter, UploadFile, File, BackgroundTasks, HTTPException, Form, Depends
+from typing import Dict, Any, List
 from app.services.analysis_service import analysis_service
 from app.core.database import get_database
-from typing import Dict, Any, List
-import uuid
-import datetime
+from app.core.config import settings
+from motor.motor_asyncio import AsyncIOMotorClient
+import certifi
 import shutil
-import os
+import uuid
 import logging
+import datetime
+import os
 
 # Configure logging
 logging.basicConfig(
