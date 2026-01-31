@@ -2,7 +2,9 @@
 
 **A Multi-Agent AI System for Customer Feedback Analysis with Enterprise-Grade Validation**
 
-> **📝 Last Updated**: January 2024 - Post Agent Refactoring v2.0  
+> **� INTERNAL INTELLIGENCE PIPELINE**: This document defines the internal multi-agent intelligence pipeline used by the Analysis Service. The platform/website architecture is defined in [ARCHITECTURE_COMPLETE.md](ARCHITECTURE_COMPLETE.md). This pipeline is invoked as a black-box execution unit and must not be modified by external services.
+
+> **�📝 Last Updated**: January 2024 - Post Agent Refactoring v2.0  
 > **✅ Status**: Agents refactored to match this architecture  
 > **📄 See Also**: [REFACTORING_SUMMARY.md](REFACTORING_SUMMARY.md) for implementation details
 
@@ -55,9 +57,9 @@
                 ▼
 ┌───────────────────────────────────────────────────────────┐
 │                 PREPROCESSING / ASR                        │
-│  • Speech-to-Text (OpenAI Whisper via noise_red)          │
-│  • Timestamped segment-level transcription                │
-│  • Local processing (no external API calls)               │
+│  • Speech-to-Text (Google Speech Recognition)             │
+│  • Metadata extraction (channels, frame rate, duration)   │
+│  • Audio normalization                                    │
 └───────────────┬───────────────────────────────────────────┘
                 │
                 ▼
@@ -175,13 +177,13 @@ Post-Processing:
 
 ### 1. Input Processing Components
 
-#### **Speech-to-Text Module** (`noise_red/transcribe_file.py`)
-- **Library**: `openai-whisper` (Whisper medium model)
+#### **Speech-to-Text Module** (`text_recog.py`)
+- **Library**: `speech_recognition` (Google Speech API)
+- **Audio Processing**: `pydub` (AudioSegment)
 - **Capabilities**:
   - Convert .wav, .mp3, and other audio formats to text
-  - Timestamped segment-level transcription
-  - Handles various audio qualities, accents, and languages
-  - Runs locally (no external API calls)
+  - Extract metadata (channels, frame rate, duration)
+  - Handle various audio qualities and formats
 
 #### **Direct Text Input**
 - Accepts pre-transcribed customer feedback
@@ -675,8 +677,8 @@ Components:
 | **AI Framework** | Google ADK (Agent Development Kit) | Multi-agent orchestration |
 | **LLM Model** | Gemini 2.5 Flash | Natural language understanding |
 | **ML Framework** | TensorFlow/Keras | Sentiment analysis model |
-| **Speech Recognition** | OpenAI Whisper (medium model) | Audio-to-text conversion (local) |
-| **Audio Processing** | Whisper native (via noise_red) | Audio file manipulation |
+| **Speech Recognition** | Google Speech Recognition API | Audio-to-text conversion |
+| **Audio Processing** | PyDub | Audio file manipulation |
 | **Session Management** | InMemorySessionService (ADK) | Agent state management |
 | **Data Format** | JSON | Structured data interchange |
 
