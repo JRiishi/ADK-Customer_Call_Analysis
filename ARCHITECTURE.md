@@ -55,9 +55,9 @@
                 ▼
 ┌───────────────────────────────────────────────────────────┐
 │                 PREPROCESSING / ASR                        │
-│  • Speech-to-Text (Google Speech Recognition)             │
-│  • Metadata extraction (channels, frame rate, duration)   │
-│  • Audio normalization                                    │
+│  • Speech-to-Text (OpenAI Whisper via noise_red)          │
+│  • Timestamped segment-level transcription                │
+│  • Local processing (no external API calls)               │
 └───────────────┬───────────────────────────────────────────┘
                 │
                 ▼
@@ -175,13 +175,13 @@ Post-Processing:
 
 ### 1. Input Processing Components
 
-#### **Speech-to-Text Module** (`text_recog.py`)
-- **Library**: `speech_recognition` (Google Speech API)
-- **Audio Processing**: `pydub` (AudioSegment)
+#### **Speech-to-Text Module** (`noise_red/transcribe_file.py`)
+- **Library**: `openai-whisper` (Whisper medium model)
 - **Capabilities**:
   - Convert .wav, .mp3, and other audio formats to text
-  - Extract metadata (channels, frame rate, duration)
-  - Handle various audio qualities and formats
+  - Timestamped segment-level transcription
+  - Handles various audio qualities, accents, and languages
+  - Runs locally (no external API calls)
 
 #### **Direct Text Input**
 - Accepts pre-transcribed customer feedback
@@ -675,8 +675,8 @@ Components:
 | **AI Framework** | Google ADK (Agent Development Kit) | Multi-agent orchestration |
 | **LLM Model** | Gemini 2.5 Flash | Natural language understanding |
 | **ML Framework** | TensorFlow/Keras | Sentiment analysis model |
-| **Speech Recognition** | Google Speech Recognition API | Audio-to-text conversion |
-| **Audio Processing** | PyDub | Audio file manipulation |
+| **Speech Recognition** | OpenAI Whisper (medium model) | Audio-to-text conversion (local) |
+| **Audio Processing** | Whisper native (via noise_red) | Audio file manipulation |
 | **Session Management** | InMemorySessionService (ADK) | Agent state management |
 | **Data Format** | JSON | Structured data interchange |
 

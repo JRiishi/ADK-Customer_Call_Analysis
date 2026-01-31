@@ -8,8 +8,6 @@ import sys
 import os
 import json
 import re
-import speech_recognition as sr
-from pydub import AudioSegment
 from pathlib import Path
 import csv
 
@@ -19,26 +17,46 @@ load_dotenv('main_agent/.env')
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+# Add noise_red to path for Whisper-based transcription
+NOISE_RED_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'noise_red')
+sys.path.insert(0, NOISE_RED_PATH)
+
 # Import agents
 from issue_extraction.agent import root_agent as issue_extraction_agent
 from service_classification_agent.agent import service_classification_agent
 from insight_and_report_agent.agent import insight_report_agent
 
+# Lazy-load Whisper model (loaded once on first use)
+_whisper_model = None
+
+def _get_whisper_model():
+    """Load Whisper model once and cache it."""
+    global _whisper_model
+    if _whisper_model is None:
+        import whisper
+        _whisper_model = whisper.load_model("medium")
+    return _whisper_model
+
 
 def transcribe_audio(audio_path):
-    """Transcribe audio to text."""
+    """Transcribe audio to text using Whisper (via noise_red)."""
     try:
-        recognizer = sr.Recognizer()
-        audio_segment = AudioSegment.from_file(audio_path)
+        import whisper
+        model = _get_whisper_model()
+        result = model.transcribe(audio_path, language="en", fp16=False)
         
-        with sr.AudioFile(audio_path) as source:
-            audio_data = recognizer.record(source)
-            transcript = recognizer.recognize_google(audio_data)
+        # Combine all segment texts into one transcript
+        segments = result.get("segments", [])
+        transcript = " ".join(seg["text"].strip() for seg in segments)
+        
+        # Calculate duration from last segment end time
+        duration = segments[-1]["end"] if segments else 0.0
         
         return {
             'success': True,
             'transcript': transcript,
-            'duration': len(audio_segment) / 1000.0,
+            'duration': duration,
+            'segments': segments,  # include detailed segments
             'error': None
         }
     except Exception as e:
@@ -47,8 +65,18 @@ def transcribe_audio(audio_path):
 
 def call_agent_sync(agent, input_text):
     """
-    Call ADK agent synchronously with proper InvocationContext.
+    Call ADK agent synchronously - directly using the Bedrock LLM.
     """
+    # Get the agent's instruction and use it as system prompt
+    instruction = agent.instruction if hasattr(agent, 'instruction') else ""
+    
+    # Use the model directly with combined prompt
+    if hasattr(agent, 'model') and hasattr(agent.model, 'generate'):
+        # Direct call to Bedrock LLM
+        full_prompt = f"{instruction}\n\nTRANSCRIPT:\n{input_text}"
+        return agent.model.generate(full_prompt)
+    
+    # Fallback to ADK flow if model doesn't have generate method
     from google.adk.sessions import InMemorySessionService
     from google.adk.runners import InvocationContext
     from google.adk.plugins.plugin_manager import PluginManager

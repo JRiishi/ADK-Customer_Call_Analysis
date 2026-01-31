@@ -1,43 +1,47 @@
 import boto3
+from botocore.config import Config
 import json
 import os
 from typing import AsyncGenerator, Any
+import requests
+import base64
 
 from google.adk.models import BaseLlm, LlmRequest, LlmResponse
 from google.genai import types
+
+# Load environment variables from .env file
+from dotenv import load_dotenv
+load_dotenv('main_agent/.env')
 
 
 class BedrockClaudeLLM(BaseLlm):
     """
     ADK-compatible LLM backend using AWS Bedrock (Claude Sonnet).
-    Inherits from BaseLlm to integrate with Google ADK Agent framework.
-    Authentication: Set AWS_BEARER_TOKEN_BEDROCK environment variable with your bearer token.
+    Supports Bedrock API Key (bearer token) authentication.
+    
+    Set AWS_BEARER_TOKEN_BEDROCK in main_agent/.env
     """
 
-    model: str = "anthropic.claude-3-sonnet-20240229"
+    model: str = "anthropic.claude-3-sonnet-20240229-v1:0"
     max_tokens: int = 2048
     temperature: float = 0.2
     region: str = "us-east-1"
     _client: Any = None
+    _bearer_token: str = None
+    _api_endpoint: str = None
 
     def model_post_init(self, __context: Any) -> None:
-        """Initialize boto3 client after Pydantic model initialization."""
-        bearer_token = os.getenv("AWS_BEARER_TOKEN_BEDROCK")
+        """Initialize client after Pydantic model initialization."""
+        self._bearer_token = os.getenv("AWS_BEARER_TOKEN_BEDROCK")
+        self.region = os.getenv("AWS_DEFAULT_REGION", self.region)
         
-        if bearer_token:
-            # Use bearer token for authentication
-            self._client = boto3.client(
-                "bedrock-runtime",
-                region_name=self.region,
-                aws_access_key_id="",
-                aws_secret_access_key="",
-            )
-            # Override with bearer token in headers (custom approach)
-            self._bearer_token = bearer_token
+        if self._bearer_token:
+            # Decode the API key to get endpoint info
+            # Bedrock API Keys are base64 encoded with format: BedrockAPIKey-XXXX-at-ACCOUNTID:SECRET
+            self._api_endpoint = f"https://bedrock-runtime.{self.region}.amazonaws.com"
         else:
-            # Fall back to standard AWS credentials (aws configure)
+            # Fall back to standard AWS credentials
             self._client = boto3.client("bedrock-runtime", region_name=self.region)
-            self._bearer_token = None
 
     @classmethod
     def supported_models(cls) -> list[str]:
@@ -75,6 +79,10 @@ class BedrockClaudeLLM(BaseLlm):
                     part.text for part in llm_request.config.system_instruction.parts 
                     if hasattr(part, 'text') and part.text
                 )
+        
+        # Debug disabled - uncomment to troubleshoot
+        # print(f"[BEDROCK DEBUG] System prompt length: {len(system_prompt) if system_prompt else 0}")
+        # print(f"[BEDROCK DEBUG] Messages: {messages}")
 
         payload = {
             "anthropic_version": "bedrock-2023-05-31",
@@ -86,14 +94,19 @@ class BedrockClaudeLLM(BaseLlm):
         if system_prompt:
             payload["system"] = system_prompt
 
-        # Call Bedrock API (synchronous, wrapped for async interface)
+        # Call Bedrock API
         try:
-            response = self._client.invoke_model(
-                modelId=self.model,
-                body=json.dumps(payload),
-            )
-            result = json.loads(response["body"].read())
-            text_response = result["content"][0]["text"]
+            if self._bearer_token:
+                # Use Bedrock API Key (bearer token) authentication
+                text_response = self._call_with_api_key(payload)
+            else:
+                # Use boto3 client with IAM credentials
+                response = self._client.invoke_model(
+                    modelId=self.model,
+                    body=json.dumps(payload),
+                )
+                result = json.loads(response["body"].read())
+                text_response = result["content"][0]["text"]
         except Exception as e:
             text_response = f"Error calling Bedrock: {str(e)}"
 
@@ -107,6 +120,29 @@ class BedrockClaudeLLM(BaseLlm):
         )
         
         yield llm_response
+
+    def _call_with_api_key(self, payload: dict) -> str:
+        """Call Bedrock using API Key authentication."""
+        url = f"{self._api_endpoint}/model/{self.model}/invoke"
+        
+        headers = {
+            "Authorization": f"Bearer {self._bearer_token}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+        
+        response = requests.post(
+            url,
+            headers=headers,
+            json=payload,
+            timeout=60,
+        )
+        
+        if response.status_code != 200:
+            raise Exception(f"Bedrock API error {response.status_code}: {response.text}")
+        
+        result = response.json()
+        return result["content"][0]["text"]
 
     def _convert_request_to_messages(self, llm_request: LlmRequest) -> list[dict]:
         """Convert ADK LlmRequest contents to Bedrock message format."""
@@ -161,30 +197,15 @@ class BedrockClaudeLLM(BaseLlm):
             "messages": [{"role": "user", "content": prompt}],
         }
 
-        if self._bearer_token:
-            # Use bearer token authentication
-            import requests
-            headers = {
-                "Authorization": f"Bearer {self._bearer_token}",
-                "Content-Type": "application/json",
-            }
-            try:
-                response = requests.post(
-                    f"https://bedrock.{self.region}.amazonaws.com/model/{self.model}/invoke",
-                    headers=headers,
-                    json=payload,
-                    timeout=30,
+        try:
+            if self._bearer_token:
+                return self._call_with_api_key(payload)
+            else:
+                response = self._client.invoke_model(
+                    modelId=self.model,
+                    body=json.dumps(payload),
                 )
-                response.raise_for_status()
-                result = response.json()
+                result = json.loads(response["body"].read())
                 return result["content"][0]["text"]
-            except Exception as e:
-                return f"Error calling Bedrock with bearer token: {str(e)}"
-        else:
-            # Use standard boto3 client
-            response = self._client.invoke_model(
-                modelId=self.model,
-                body=json.dumps(payload),
-            )
-            result = json.loads(response["body"].read())
-            return result["content"][0]["text"]
+        except Exception as e:
+            return f"Error calling Bedrock: {str(e)}"

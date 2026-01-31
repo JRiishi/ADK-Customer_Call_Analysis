@@ -4,11 +4,15 @@ End-to-End Pipeline Test
 Process audio file through complete agent pipeline with Bedrock backend.
 """
 
+import sys
+import os
 import json
 import asyncio
 from datetime import datetime
-import speech_recognition as sr
-from pydub import AudioSegment
+
+# Add noise_red to path for Whisper-based transcription
+NOISE_RED_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'noise_red')
+sys.path.insert(0, NOISE_RED_PATH)
 
 # Import all agents
 from issue_extraction.agent import root_agent as issue_extraction_agent
@@ -23,39 +27,45 @@ from main_agent.agent import main_agent
 from output_validation_agent import OutputValidator
 from priority_scoring import calculate_priority
 
+# Lazy-load Whisper model (loaded once on first use)
+_whisper_model = None
+
+def _get_whisper_model():
+    """Load Whisper model once and cache it."""
+    global _whisper_model
+    if _whisper_model is None:
+        import whisper
+        _whisper_model = whisper.load_model("medium")
+    return _whisper_model
+
 
 def transcribe_audio(audio_path: str) -> str:
     """
-    Transcribe audio file to text using speech recognition.
+    Transcribe audio file to text using Whisper (via noise_red).
     
     Args:
-        audio_path: Path to WAV audio file
+        audio_path: Path to audio file (WAV, MP3, etc.)
         
     Returns:
         Transcribed text
     """
     print(f"\n🎤 Transcribing audio: {audio_path}")
     
-    recognizer = sr.Recognizer()
-    
     try:
-        # Load audio file
-        with sr.AudioFile(audio_path) as source:
-            audio_data = recognizer.record(source)
-            
-        # Recognize speech using Google Speech Recognition
-        print("Processing audio...")
-        text = recognizer.recognize_google(audio_data)
+        import whisper
+        model = _get_whisper_model()
+        print("Processing audio with Whisper...")
+        result = model.transcribe(audio_path, language="en", fp16=False)
+        
+        # Combine all segment texts into one transcript
+        segments = result.get("segments", [])
+        text = " ".join(seg["text"].strip() for seg in segments)
         
         print(f"✅ Transcription complete ({len(text)} characters)")
         return text
         
-    except sr.UnknownValueError:
-        return "Could not understand audio"
-    except sr.RequestError as e:
-        return f"Error: {e}"
     except Exception as e:
-        print(f"⚠️  Transcription failed, using known transcript instead")
+        print(f"⚠️  Transcription failed: {e}, using known transcript instead")
         # Fallback to known transcript from CSV
         known_transcript = "I am extremely dissatisfied with my recent order! I am John Davis, and I'm calling about order number 123456. The FR-4401 refrigerator arrived yesterday, and it's damaged. There's a huge dent on the side, and it's not cooling properly. I want to know what you're going to do about this. I demand a replacement, and I want it delivered as soon as possible. I've been without a working refrigerator for two days now!"
         print(f"Using fallback transcript: {known_transcript[:100]}...")
