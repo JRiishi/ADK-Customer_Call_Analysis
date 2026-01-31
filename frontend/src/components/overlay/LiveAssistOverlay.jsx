@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { AlertTriangle, Check, X } from 'lucide-react';
+import { AlertTriangle, Zap, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const LiveAssistOverlay = ({ callId, agentId, onTranscriptUpdate }) => {
@@ -47,42 +47,71 @@ const LiveAssistOverlay = ({ callId, agentId, onTranscriptUpdate }) => {
     };
 
     return (
-        <div className="absolute top-4 right-4 w-96 z-50 pointer-events-none">
-            <div className="flex justify-end mb-4">
-                <span className={`px-2 py-1 rounded text-xs font-mono font-bold ${status === 'connected' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                    }`}>
-                    {status.toUpperCase()}
-                </span>
+        <div className="absolute top-6 right-6 w-[400px] z-50 pointer-events-none flex flex-col gap-4">
+            <div className="flex justify-end">
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border backdrop-blur-md shadow-sm
+                    ${status === 'connected'
+                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                            : 'bg-rose-500/10 border-rose-500/20 text-rose-400'
+                        }`}>
+                    <div className={`w-2 h-2 rounded-full ${status === 'connected' ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
+                    {status === 'connected' ? 'Live Insight Active' : 'Connecting...'}
+                </motion.div>
             </div>
 
-            <AnimatePresence>
+            <AnimatePresence mode="popLayout">
                 {nudges.map((nudge) => (
                     <motion.div
                         key={nudge.id}
-                        initial={{ opacity: 0, x: 20, scale: 0.95 }}
+                        layout
+                        initial={{ opacity: 0, x: 50, scale: 0.95 }}
                         animate={{ opacity: 1, x: 0, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        className={`mb-3 p-4 rounded-xl border backdrop-blur-md shadow-2xl pointer-events-auto
+                        exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                        className={`relative p-5 rounded-2xl border backdrop-blur-xl shadow-lg pointer-events-auto overflow-hidden
                             ${nudge.severity === 'high'
-                                ? 'bg-red-900/40 border-red-500/50 text-red-100'
-                                : 'bg-blue-900/40 border-blue-500/50 text-blue-100'}
+                                ? 'bg-red-500/10 border-red-500/20 shadow-red-500/5'
+                                : 'bg-cyan-600/10 border-cyan-500/20 shadow-cyan-500/5'}
                         `}
                     >
-                        <div className="flex items-start">
-                            <div className={`p-2 rounded-lg mr-3 ${nudge.severity === 'high' ? 'bg-red-500/20' : 'bg-blue-500/20'}`}>
-                                <AlertTriangle size={20} />
+                        {/* Ambient Glow */}
+                        <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-[60px] -mr-16 -mt-16 pointer-events-none opacity-40
+                            ${nudge.severity === 'high' ? 'bg-red-500/20' : 'bg-cyan-500/20'}`}
+                        />
+
+                        <div className="flex items-start gap-4 relative z-10">
+                            <div className={`p-2.5 rounded-xl flex-shrink-0 shadow-sm
+                                ${nudge.severity === 'high' ? 'bg-red-500/10' : 'bg-cyan-500/10'}`}>
+                                {nudge.severity === 'high'
+                                    ? <AlertTriangle size={20} className="text-red-300" />
+                                    : <Zap size={20} className="text-cyan-300" />
+                                }
                             </div>
-                            <div>
-                                <h4 className="font-bold text-sm tracking-wide uppercase mb-1">
-                                    {nudge.severity} Priority
-                                </h4>
-                                <p className="text-sm font-medium leading-relaxed opacity-90">
+
+                            <div className="flex-1 min-w-0">
+                                <div className="flex justify-between items-start mb-1">
+                                    <h4 className={`text-xs font-bold uppercase tracking-widest
+                                        ${nudge.severity === 'high' ? 'text-red-300' : 'text-cyan-300'}`}>
+                                        {nudge.severity} Priority
+                                    </h4>
+                                    <span className="text-[10px] text-gray-500">Just now</span>
+                                </div>
+
+                                <p className="text-sm font-medium text-gray-200 leading-relaxed mb-3">
                                     {nudge.message}
                                 </p>
+
                                 {nudge.action && (
-                                    <div className="mt-3 text-xs bg-black/20 p-2 rounded border border-white/5">
-                                        👉 {nudge.action}
-                                    </div>
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="text-xs bg-white/5 p-3 rounded-lg border border-white/5 flex items-start gap-2"
+                                    >
+                                        <CheckCircle2 size={14} className="text-emerald-400 mt-0.5 flex-shrink-0" />
+                                        <span className="text-gray-300 font-medium">Suggested: <span className="text-white">{nudge.action}</span></span>
+                                    </motion.div>
                                 )}
                             </div>
                         </div>

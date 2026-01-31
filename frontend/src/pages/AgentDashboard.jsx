@@ -7,7 +7,50 @@ import axios from 'axios';
 const AgentDashboard = () => {
     const navigate = useNavigate();
     const [recentCalls, setRecentCalls] = useState([]);
+    const [stats, setStats] = useState({ qa: 94, compliance: 98, duration: '4:12', calls: 12 });
     const [loading, setLoading] = useState(true);
+    const [lastUpdated, setLastUpdated] = useState(new Date());
+
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                const res = await axios.get('http://localhost:8000/api/v1/analysis/');
+                const data = res.data;
+
+                // Sort by date desc just in case
+                const sortedCalls = data.sort((a, b) => new Date(b.started_at) - new Date(a.started_at)).slice(0, 5);
+                setRecentCalls(sortedCalls);
+
+                // Calculate simple stats from actual data if available
+                if (data.length > 0) {
+                    const totalQa = data.reduce((acc, curr) => acc + (curr.scores?.qa || 0), 0);
+                    const totalSop = data.reduce((acc, curr) => acc + (curr.scores?.sop || 0), 0);
+                    const avgQa = Math.round(totalQa / data.length);
+                    const avgSop = Math.round(totalSop / data.length);
+
+                    setStats(prev => ({
+                        ...prev,
+                        qa: avgQa || 94,
+                        compliance: avgSop || 98,
+                        calls: data.length
+                    }));
+                }
+                setLastUpdated(new Date());
+            } catch (err) {
+                console.warn("Using mock call history due to API error", err);
+                // Keep existing mocks if needed, or handle error
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        // Initial Fetch
+        fetchDashboardData();
+
+        // Live Polling every 5 seconds
+        const interval = setInterval(fetchDashboardData, 5000);
+        return () => clearInterval(interval);
+    }, []);
 
     const performanceData = [
         { day: 'Mon', score: 85 },
@@ -19,47 +62,39 @@ const AgentDashboard = () => {
         { day: 'Sun', score: 96 },
     ];
 
-    useEffect(() => {
-        const fetchDemoCalls = async () => {
-            try {
-                // Try to get actual calls from DB, fallback to demo if none
-                const res = await axios.get('http://localhost:8000/api/v1/analysis/');
-                setRecentCalls(res.data.slice(0, 5));
-            } catch (err) {
-                console.warn("Using mock call history");
-                setRecentCalls([
-                    { _id: 'call_demo_1', started_at: new Date().toISOString(), scores: { compliance: 95, sentiment: 80 }, status: 'completed' },
-                    { _id: 'call_demo_2', started_at: new Date().toISOString(), scores: { compliance: 88, sentiment: 60 }, status: 'completed' }
-                ]);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchDemoCalls();
-    }, []);
-
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
             <header className="flex justify-between items-end">
                 <div>
                     <h1 className="text-3xl font-bold text-white tracking-tight">Agent Performance Overview</h1>
-                    <p className="text-gray-400 mt-2">Welcome back, Agent 007. Here is your current standing.</p>
+                    <div className="flex items-center gap-2 mt-2">
+                        <p className="text-gray-400">Welcome back, Agent 007.</p>
+                        <span className="text-xs text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full flex items-center gap-1 animate-pulse">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            Live Updates
+                        </span>
+                    </div>
                 </div>
-                <button
-                    onClick={() => navigate('/console')}
-                    className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(59,130,246,0.3)] flex items-center gap-2"
-                >
-                    <Play size={18} fill="currentColor" /> Enter Console
-                </button>
+                <div className="flex flex-col items-end gap-2">
+                    <button
+                        onClick={() => navigate('/console')}
+                        className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(59,130,246,0.3)] flex items-center gap-2"
+                    >
+                        <Play size={18} fill="currentColor" /> Enter Console
+                    </button>
+                    <p className="text-[10px] text-gray-500 font-mono">
+                        Last synced: {lastUpdated.toLocaleTimeString()}
+                    </p>
+                </div>
             </header>
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                    { label: 'Avg QA Score', value: '94%', icon: <Award className="text-blue-400" />, trend: '+2.4%' },
-                    { label: 'Compliance', value: '98%', icon: <TrendingUp className="text-green-400" />, trend: '+0.5%' },
-                    { label: 'Avg Duration', value: '4:12', icon: <Clock className="text-purple-400" />, trend: '-12s' },
-                    { label: 'Calls Today', value: '12', icon: <LayoutDashboard className="text-yellow-400" />, trend: '+3' },
+                    { label: 'Avg QA Score', value: `${stats.qa}%`, icon: <Award className="text-blue-400" />, trend: '+2.4%' },
+                    { label: 'Compliance', value: `${stats.compliance}%`, icon: <TrendingUp className="text-green-400" />, trend: '+0.5%' },
+                    { label: 'Avg Duration', value: stats.duration, icon: <Clock className="text-indigo-400" />, trend: '-12s' },
+                    { label: 'Total Calls', value: stats.calls, icon: <LayoutDashboard className="text-yellow-400" />, trend: '+3' },
                 ].map((stat, i) => (
                     <div key={i} className="bg-[#161920]/50 backdrop-blur-md border border-white/5 p-6 rounded-2xl transition-transform hover:scale-[1.02]">
                         <div className="flex justify-between items-start mb-4">
@@ -100,27 +135,44 @@ const AgentDashboard = () => {
                 {/* Recent Calls */}
                 <div className="bg-[#161920]/50 backdrop-blur-md border border-white/5 p-8 rounded-2xl flex flex-col">
                     <h3 className="text-lg font-bold text-white mb-6">Recent Evaluations</h3>
-                    <div className="space-y-4 flex-1">
-                        {recentCalls.map((call, i) => (
-                            <div
-                                key={call._id}
-                                onClick={() => navigate(`/analysis?id=${call._id}`)}
-                                className="group flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:border-blue-500/30 transition-all cursor-pointer"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
-                                        <CheckCircle size={14} />
+                    <div className="space-y-4 flex-1 overflow-y-auto max-h-[400px] custom-scrollbar pr-2">
+                        {recentCalls.length > 0 ? (
+                            recentCalls.map((call, i) => (
+                                <div
+                                    key={call._id || i}
+                                    onClick={() => navigate(`/analysis?id=${call._id}`)}
+                                    className="group flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:border-blue-500/30 transition-all cursor-pointer"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-transform group-hover:scale-110 
+                                            ${(call.scores?.qa || 0) >= 90 ? 'bg-emerald-500/10 text-emerald-400' :
+                                                (call.scores?.qa || 0) >= 75 ? 'bg-blue-500/10 text-blue-400' : 'bg-red-500/10 text-red-400'}`}>
+                                            {call.scores?.qa || 0}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-white truncate w-32 md:w-auto">
+                                                ID: {call._id?.slice(-8) || 'Unknown'}
+                                            </p>
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-[10px] text-gray-500">{new Date(call.started_at).toLocaleTimeString()}</p>
+                                                {call.scores?.risk > 0 && (
+                                                    <span className="text-[10px] text-red-400 bg-red-400/10 px-1 rounded">RISK</span>
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className="text-sm font-bold text-white">QA Score: {call.scores?.compliance || 'N/A'}</p>
-                                        <p className="text-[10px] text-gray-500">{new Date(call.started_at).toLocaleTimeString()}</p>
+                                    <div className="flex flex-col items-end gap-1">
+                                        <ArrowRight size={16} className="text-gray-600 group-hover:text-blue-400 transition-colors" />
                                     </div>
                                 </div>
-                                <ArrowRight size={16} className="text-gray-600 group-hover:text-blue-400 transition-colors" />
+                            ))
+                        ) : (
+                            <div className="text-center py-10 text-gray-500 text-sm">
+                                No evaluations yet.
                             </div>
-                        ))}
+                        )}
                     </div>
-                    <button className="w-full mt-6 py-3 bg-white/5 border border-white/10 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 transition-all">
+                    <button onClick={() => navigate('/profile')} className="w-full mt-6 py-3 bg-white/5 border border-white/10 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 transition-all">
                         View All History
                     </button>
                 </div>

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import db
-from app.api.v1.endpoints import live, analysis, sop, coaching
+from app.api.v1.endpoints import live, analysis, sop, coaching, agent, buddy, recommendations
 import logging
 
 # Configure logging
@@ -32,6 +32,9 @@ app.include_router(live.router, prefix=f"{settings.API_V1_STR}/live", tags=["Liv
 app.include_router(analysis.router, prefix=f"{settings.API_V1_STR}/analysis", tags=["Analysis"])
 app.include_router(sop.router, prefix=f"{settings.API_V1_STR}/sop", tags=["SOP"])
 app.include_router(coaching.router, prefix=f"{settings.API_V1_STR}/coaching", tags=["Coaching"])
+app.include_router(agent.router, prefix=f"{settings.API_V1_STR}/agent", tags=["Agent"])
+app.include_router(buddy.router, prefix=f"{settings.API_V1_STR}/buddy", tags=["Buddy"])
+app.include_router(recommendations.router, prefix=f"{settings.API_V1_STR}/recommendations", tags=["Recommendations"])
 
 @app.on_event("startup")
 async def startup_db():

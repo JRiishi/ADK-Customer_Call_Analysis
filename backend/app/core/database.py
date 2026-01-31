@@ -31,6 +31,16 @@ class Database:
         if self.client:
             self.client.close()
             print("🔌 MongoDB Connection Closed")
+    
+    @property
+    def buddy_pairs(self):
+        """Access buddy_pairs collection"""
+        return self.db.buddy_pairs
+    
+    @property
+    def agent_profiles(self):
+        """Access agent_profiles collection"""
+        return self.db.agent_profiles
 
 db = Database()
 

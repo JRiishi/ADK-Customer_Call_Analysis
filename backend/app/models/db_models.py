@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Dict, Any, Optional, List
 import datetime
+import uuid
 
 class CallLog(BaseModel):
     call_id: str
@@ -24,7 +25,18 @@ class SOP(BaseModel):
 class AgentProfile(BaseModel):
     agent_id: str
     name: str
+    email: Optional[str] = None
     level: int = 1
     skills: Dict[str, int] = {} # {"Empathy": 80, "Speed": 90}
     buddy_id: Optional[str] = None # Paired "Buddy" for coaching
     joined_at: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
+
+class BuddyPair(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    mentee_id: str  # Agent who needs help
+    mentor_id: str  # Agent who is helping
+    mentee_name: str
+    mentor_name: str
+    assigned_at: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
+    status: str = "active"  # active, completed, cancelled
+    notes: Optional[str] = None

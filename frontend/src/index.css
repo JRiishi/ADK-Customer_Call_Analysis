@@ -1,55 +1,49 @@
 @import "tailwindcss";
 
 @theme {
-  --color-obsidian-900: #0a0a0b;
-  --color-obsidian-800: #121214;
-  --color-obsidian-700: #1c1c1f;
+  --color-obsidian-900: #050505;
+  --color-obsidian-800: #0a0a0b;
+  --color-obsidian-700: #121212;
 
-  --color-glass: rgba(255, 255, 255, 0.05);
-  --color-glass-hover: rgba(255, 255, 255, 0.1);
+  --color-glass: rgba(255, 255, 255, 0.03);
+  --color-glass-hover: rgba(255, 255, 255, 0.08);
 
-  --color-gold-400: #fbbf24;
-  --color-gold-500: #f59e0b;
+  --color-cyan-400: #22d3ee;
+  --color-cyan-500: #06b6d4;
 
-  --color-primary: #3b82f6;
-  --color-primary-dim: #1d4ed8;
+  --color-primary: #06b6d4; 
+  --color-primary-dim: #0891b2;
 
   --animate-fade-in: fadeIn 0.5s ease-out;
   --animate-slide-up: slideUp 0.5s ease-out;
   --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-wave: wave 1.2s ease-in-out infinite;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+@keyframes wave {
+  0%, 100% { height: 10%; }
+  50% { height: 100%; }
 }
 
 @layer base {
   body {
-    @apply bg-obsidian-900 text-gray-100 antialiased selection:bg-gold-500/30;
+    @apply bg-obsidian-900 text-gray-100 antialiased selection:bg-cyan-500/30 selection:text-cyan-100;
   }
 }
 
 @layer utilities {
   .glass-panel {
-    @apply bg-obsidian-800/80 backdrop-blur-md border border-white/10 shadow-xl;
+    @apply bg-obsidian-800/80 backdrop-blur-xl border border-white/5 shadow-2xl;
   }
 
   .glass-card {
@@ -59,26 +53,32 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400;
   }
+  
+  .text-gradient-cyan {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500;
+  }
 
-  .text-gradient-gold {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-gold-400 to-yellow-600;
+  /* Waveform Animation Utility */
+  .wave-bar {
+    @apply w-1 bg-cyan-500 rounded-full mx-[1px] animate-wave;
   }
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0b;
+  background: #050505;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2d2d30;
+  background: #262626;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4b4b50;
+  background: #404040;
 }

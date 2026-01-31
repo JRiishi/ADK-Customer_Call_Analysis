@@ -26,10 +26,10 @@ const MainLayout = () => {
             <aside className="w-72 bg-obsidian-800/50 backdrop-blur-xl border-r border-white/5 flex flex-col relative z-20">
                 <div className="p-8 pb-4">
                     <div className="flex items-center gap-2 mb-2">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-lg shadow-primary/20">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-600 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-900/20">
                             <span className="font-bold text-white text-lg">C</span>
                         </div>
-                        <h1 className="text-xl font-bold tracking-tight text-white">Cognivista<span className="text-primary font-light">QA</span></h1>
+                        <h1 className="text-xl font-bold tracking-tight text-white">Cognivista<span className="text-cyan-400 font-light">QA</span></h1>
                     </div>
                     <p className="text-xs text-gray-500 font-mono pl-10">V2.0 ENTERPRISE BETA</p>
                 </div>
@@ -66,16 +66,16 @@ const MainLayout = () => {
                             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                             <span className="text-xs font-medium text-green-400">System Core Online</span>
                         </div>
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-gray-700 to-gray-600 border border-white/10 ring-2 ring-transparent hover:ring-primary/50 transition-all cursor-pointer" />
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-gray-700 to-gray-600 border border-white/10 ring-2 ring-transparent hover:ring-cyan-500/50 transition-all cursor-pointer" />
                     </div>
                 </header>
 
                 {/* Content Area */}
-                <div className="flex-1 overflow-y-auto p-8 relative">
+                <div className="flex-1 overflow-hidden relative">
                     {/* Subtle background glow effect */}
-                    <div className="absolute top-0 left-0 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none rounded-full transform -translate-y-1/2 translate-x-1/4" />
+                    <div className="absolute top-0 left-0 w-full h-[500px] bg-cyan-500/5 blur-[120px] pointer-events-none rounded-full transform -translate-y-1/2 translate-x-1/4" />
 
-                    <div className="relative z-10 max-w-7xl mx-auto">
+                    <div className="w-full h-full relative z-10">
                         <Outlet />
                     </div>
                 </div>

@@ -10,6 +10,7 @@ const AgentLayout = () => {
         { path: "/manager", label: "Manager", icon: <BarChart3 size={20} /> },
         { path: "/coaching", label: "Coaching", icon: <Users size={20} /> },
         { path: "/sops", label: "SOPs", icon: <BookOpen size={20} /> },
+        { path: "/profile", label: "My Profile", icon: <Users size={20} /> }, // Re-using icon for now or use User if imported
     ];
 
     return (
@@ -17,7 +18,7 @@ const AgentLayout = () => {
             {/* Cinematic Sidebar */}
             <aside className="w-20 lg:w-64 flex-shrink-0 border-r border-white/10 bg-[#161920]/80 backdrop-blur-xl flex flex-col transition-all duration-300">
                 <div className="h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b border-white/5">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-white">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-600 to-blue-600 flex items-center justify-center font-bold text-white">
                         C
                     </div>
                     <span className="ml-3 font-semibold text-lg hidden lg:block tracking-wide">Cognivista</span>
@@ -31,13 +32,13 @@ const AgentLayout = () => {
                             className={({ isActive }) => `
                                 flex items-center px-3 py-3 rounded-xl transition-all duration-200 group
                                 ${isActive
-                                    ? 'bg-blue-600/10 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.3)] border border-blue-500/20'
+                                    ? 'bg-cyan-600/10 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.3)] border border-cyan-500/20'
                                     : 'text-gray-400 hover:text-white hover:bg-white/5'}
                             `}
                         >
                             {({ isActive }) => (
                                 <>
-                                    <span className={isActive ? 'text-blue-400' : 'text-gray-400 group-hover:text-white'}>
+                                    <span className={isActive ? 'text-cyan-400' : 'text-gray-400 group-hover:text-white'}>
                                         {item.icon}
                                     </span>
                                     <span className="ml-3 font-medium hidden lg:block">{item.label}</span>
@@ -56,9 +57,9 @@ const AgentLayout = () => {
             </aside>
 
             {/* Main Content Area */}
-            <main className="flex-1 overflow-y-auto relative z-0">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/10 via-[#0f1115] to-[#0f1115] pointer-events-none" />
-                <div className="relative z-10 p-6 lg:p-10 min-h-full">
+            <main className="flex-1 overflow-hidden relative z-0">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-900/10 via-[#0f1115] to-[#0f1115] pointer-events-none" />
+                <div className="relative z-10 w-full h-full">
                     <Outlet />
                 </div>
             </main>

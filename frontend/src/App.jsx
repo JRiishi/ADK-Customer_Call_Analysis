@@ -8,6 +8,9 @@ import AgentDashboard from './pages/AgentDashboard';
 import ManagerDashboard from './pages/ManagerDashboard';
 import SOPManager from './pages/SOPManager';
 
+import AgentProfile from './pages/AgentProfile';
+import LandingPage from './pages/LandingPage';
+
 // Mock missing pages for compilation
 const MockPage = ({ title }) => (
   <div className="flex items-center justify-center h-full text-gray-500 text-2xl font-bold">
@@ -19,8 +22,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<AgentLayout />}>
-          <Route index element={<Navigate to="/console" replace />} />
+        {/* Landing Page Route */}
+        <Route path="/" element={<LandingPage />} />
+
+        {/* Protected/App Routes wrapped in AgentLayout */}
+        <Route element={<AgentLayout />}>
           <Route path="console" element={<AgentConsole />} />
           <Route path="analysis" element={<PostCallAnalysis />} />
           <Route path="supervisor" element={<SupervisorDashboard />} />
@@ -28,6 +34,7 @@ function App() {
           <Route path="dashboard" element={<AgentDashboard />} />
           <Route path="manager" element={<ManagerDashboard />} />
           <Route path="sops" element={<SOPManager />} />
+          <Route path="profile" element={<AgentProfile />} />
         </Route>
       </Routes>
     </BrowserRouter>
