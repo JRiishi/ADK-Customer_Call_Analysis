@@ -27,3 +27,4 @@ if prediction>0.5:
 else:
     print("Negative")
 print(f"Prediction: {prediction}")
+
