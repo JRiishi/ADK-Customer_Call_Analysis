@@ -16,29 +16,53 @@ class SentimentAgent(BaseAgent):
         logger.info(f"🎭 [SENTIMENT] Analyzing transcript ({len(transcript)} chars)")
         
         prompt = f"""
-Analyze the following call transcript for sentiment.
+[TASK: SENTIMENT ANALYSIS - Return emotion scores ONLY]
 
-TRANSCRIPT:
+You are analyzing CUSTOMER EMOTIONS in a service call.
+
+TRANSCRIPT TO ANALYZE:
+---
 {transcript}
+---
 
-TASK:
-1. Determine overall sentiment score (-100 to +100, where -100 is very negative, 0 is neutral, +100 is very positive).
-2. Identify the sentiment at the Beginning (Opening), Middle, and End (Closing) phases.
-3. Flag if any escalation indicators are present (threats to cancel, legal mentions, extreme frustration).
+SCORING SCALE: -100 (very angry/negative) to +100 (very happy/positive), 0 is neutral
 
-You MUST respond with ONLY this JSON format, no other text:
+ANALYZE:
+1. Overall sentiment score for the ENTIRE call
+2. Sentiment at three phases: Opening, Middle, Closing
+3. Whether customer escalated (threatened to cancel, mentioned lawyers, extreme anger)
 
-{{
-    "score": <integer from -100 to 100>,
+RESPOND WITH THIS EXACT JSON STRUCTURE (no other text):
+{{{{
+    "score": <INTEGER from -100 to +100>,
     "trajectory": [
-        {{ "phase": "Opening", "score": <integer>, "label": "<sentiment label>" }},
-        {{ "phase": "Middle", "score": <integer>, "label": "<sentiment label>" }},
-        {{ "phase": "Closing", "score": <integer>, "label": "<sentiment label>" }}
+        {{{{ "phase": "Opening", "score": <INTEGER>, "label": "<Happy|Satisfied|Neutral|Frustrated|Angry>" }}}},
+        {{{{ "phase": "Middle", "score": <INTEGER>, "label": "<Happy|Satisfied|Neutral|Frustrated|Angry>" }}}},
+        {{{{ "phase": "Closing", "score": <INTEGER>, "label": "<Happy|Satisfied|Neutral|Frustrated|Angry>" }}}}
     ],
     "label": "<Positive|Neutral|Negative>",
-    "escalation_detected": <true|false>
-}}
+    "escalation_detected": <BOOLEAN true/false>
+}}}}
+
+EXAMPLE for angry customer: {{"score": -60, "trajectory": [...], "label": "Negative", "escalation_detected": true}}
+EXAMPLE for happy customer: {{"score": 75, "trajectory": [...], "label": "Positive", "escalation_detected": false}}
 """
         result = await self._invoke_llm(prompt)
+        
+        # Ensure required fields exist
+        if 'score' not in result:
+            result['score'] = 0
+        if 'label' not in result:
+            score = result.get('score', 0)
+            result['label'] = 'Positive' if score > 20 else ('Negative' if score < -20 else 'Neutral')
+        if 'trajectory' not in result:
+            result['trajectory'] = [
+                {"phase": "Opening", "score": result.get('score', 0), "label": result.get('label', 'Neutral')},
+                {"phase": "Middle", "score": result.get('score', 0), "label": result.get('label', 'Neutral')},
+                {"phase": "Closing", "score": result.get('score', 0), "label": result.get('label', 'Neutral')}
+            ]
+        if 'escalation_detected' not in result:
+            result['escalation_detected'] = result.get('score', 0) < -50
+        
         logger.info(f"🎭 [SENTIMENT] Complete - Score: {result.get('score', 'N/A')}, Label: {result.get('label', 'N/A')}")
         return result

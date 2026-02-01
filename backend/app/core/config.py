@@ -14,14 +14,19 @@ class Settings(BaseSettings):
     MONGODB_URL: str = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
     DATABASE_NAME: str = os.getenv("DATABASE_NAME", "cognivista_qa")
     
-    # AWS Bedrock
+    # AWS General
     AWS_REGION: str = os.getenv("AWS_DEFAULT_REGION", "us-east-1")
     AWS_DEFAULT_REGION: Optional[str] = os.getenv("AWS_DEFAULT_REGION", "us-east-1")
     AWS_ACCESS_KEY_ID: Optional[str] = os.getenv("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY: Optional[str] = os.getenv("AWS_SECRET_ACCESS_KEY")
-    AWS_BEARER_TOKEN_BEDROCK: Optional[str] = os.getenv("AWS_BEARER_TOKEN_BEDROCK")
     
+    # AWS Bedrock (LLM)
+    AWS_BEARER_TOKEN_BEDROCK: Optional[str] = os.getenv("AWS_BEARER_TOKEN_BEDROCK")
     BEDROCK_MODEL_ID: str = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-sonnet-20240229-v1:0")
+    
+    # AWS Transcribe (Speech-to-Text)
+    TRANSCRIBE_S3_BUCKET: str = os.getenv("TRANSCRIBE_S3_BUCKET", "cognivista-audio-uploads")
+    TRANSCRIBE_S3_PREFIX: str = os.getenv("TRANSCRIBE_S3_PREFIX", "audio-uploads/")
     
     # Security
     SECRET_KEY: str = os.getenv("SECRET_KEY", "CHANGE_THIS_IN_PRODUCTION_SECRET_KEY")

@@ -4,6 +4,8 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianG
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 const AgentDashboard = () => {
     const navigate = useNavigate();
     const [recentCalls, setRecentCalls] = useState([]);
@@ -14,7 +16,7 @@ const AgentDashboard = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const res = await axios.get('http://localhost:8000/api/v1/analysis/');
+                const res = await axios.get(`${API_BASE}/api/v1/analysis/`);
                 const data = res.data;
 
                 // Sort by date desc just in case

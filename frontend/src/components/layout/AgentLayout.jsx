@@ -57,9 +57,9 @@ const AgentLayout = () => {
             </aside>
 
             {/* Main Content Area */}
-            <main className="flex-1 overflow-hidden relative z-0">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-900/10 via-[#0f1115] to-[#0f1115] pointer-events-none" />
-                <div className="relative z-10 w-full h-full">
+            <main className="flex-1 overflow-y-auto overflow-x-hidden relative z-0">
+                <div className="fixed inset-0 left-20 lg:left-64 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-900/10 via-[#0f1115] to-[#0f1115] pointer-events-none" />
+                <div className="relative z-10 w-full p-6 lg:p-10 pb-16">
                     <Outlet />
                 </div>
             </main>

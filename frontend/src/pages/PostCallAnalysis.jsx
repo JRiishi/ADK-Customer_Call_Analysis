@@ -5,6 +5,8 @@ import { CheckCircle, XCircle, AlertTriangle, Activity, BookOpen, MessageSquare,
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import axios from 'axios';
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 const PostCallAnalysis = () => {
     const [searchParams] = useSearchParams();
     const callId = searchParams.get('id');
@@ -23,7 +25,7 @@ const PostCallAnalysis = () => {
             const checkStatus = async () => {
                 if (!isMounted) return;
                 try {
-                    const res = await axios.get(`http://localhost:8000/api/v1/analysis/${callId}`);
+                    const res = await axios.get(`${API_BASE}/api/v1/analysis/${callId}`);
                     const callData = res.data;
 
                     if (callData.status === 'completed' && callData.analysis) {
@@ -209,13 +211,20 @@ const PostCallAnalysis = () => {
         </motion.div>
     );
 
-    const { sentiment, sop_compliance, risk_analysis, summary, qa_score, coaching } = data;
+    const { sentiment, sop_compliance, risk_analysis, summary, qa_score, coaching, summary_metrics } = data;
 
-    // Extract scores
-    const sentimentScore = summary?.sentiment_score ?? sentiment?.overall_score ?? 0;
-    const sopScore = summary?.sop_score ?? sop_compliance?.overall_score ?? 0;
-    const qaScoreValue = summary?.qa_score ?? qa_score?.overall_score ?? 0;
-    const riskDetected = summary?.risk_detected ?? risk_analysis?.detected ?? false;
+    // Extract scores with multiple fallback paths for robustness
+    // Backend stores: summary_metrics.sentiment_score, sentiment.score
+    const sentimentScore = summary_metrics?.sentiment_score ?? summary?.sentiment_score ?? sentiment?.score ?? sentiment?.overall_score ?? 0;
+    
+    // Backend stores: summary_metrics.sop_score, sop_compliance.adherence_score
+    const sopScore = summary_metrics?.sop_score ?? summary?.sop_score ?? sop_compliance?.adherence_score ?? sop_compliance?.overall_score ?? 0;
+    
+    // Backend stores: summary_metrics.qa_score, qa_score.total_score
+    const qaScoreValue = summary_metrics?.qa_score ?? summary?.qa_score ?? qa_score?.total_score ?? qa_score?.adherence_score ?? qa_score?.overall_score ?? 0;
+    
+    // Risk detection
+    const riskDetected = summary_metrics?.risk_detected ?? summary?.risk_detected ?? risk_analysis?.risk_detected ?? risk_analysis?.detected ?? false;
 
     return (
         <motion.div

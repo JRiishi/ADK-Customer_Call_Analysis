@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 
+// API Base URL - uses proxy in development, direct URL in production
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 // Simulated Waveform Component
 const Waveform = ({ active }) => (
     <div className="flex items-center justify-center gap-1 h-12 w-full max-w-[200px]">
@@ -113,10 +116,9 @@ const AgentConsole = () => {
         formData.append('agent_id', 'agent_007'); // Default or dynamic
 
         try {
-            const response = await axios.post('http://localhost:8000/api/v1/analysis/upload', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+            // Don't set Content-Type header - let axios set it automatically with boundary
+            const response = await axios.post(`${API_BASE}/api/v1/analysis/upload`, formData, {
+                timeout: 120000, // 2 minute timeout for large files
             });
             console.log("Upload Success:", response.data);
 
@@ -124,7 +126,8 @@ const AgentConsole = () => {
             navigate(`/analysis?id=${response.data.call_id}`);
         } catch (error) {
             console.error("Upload failed:", error);
-            alert("Upload failed. Please try again.");
+            const errorMsg = error.response?.data?.detail || error.message || "Upload failed. Please try again.";
+            alert(`Upload failed: ${errorMsg}`);
             setProcessingStatus('IDLE');
         } finally {
             setUploading(false);

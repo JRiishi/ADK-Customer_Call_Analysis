@@ -16,32 +16,51 @@ class RiskDetectionAgent(BaseAgent):
         logger.info(f"⚠️ [RISK] Scanning transcript for risk indicators ({len(transcript)} chars)")
         
         prompt = f"""
-Scan this customer service transcript for high-risk markers.
+[TASK: RISK DETECTION - Identify threats and dangers ONLY]
 
-RISK CATEGORIES TO CHECK:
-- Churn Risk: Customer threatening to cancel, leave, switch to competitor
-- Legal Risk: Mentions of lawsuit, lawyer, attorney, suing, court, legal action
-- Compliance Risk: Profanity, abuse, data breach mentions, privacy violations
+You are a RISK ANALYST scanning for dangerous situations in customer calls.
 
-TRANSCRIPT:
+TRANSCRIPT TO SCAN:
+---
 {transcript}
+---
 
-Analyze carefully and identify any risk flags with their severity.
+LOOK FOR THESE SPECIFIC RISKS:
+1. CHURN RISK: Words like "cancel", "leave", "competitor", "switch provider", "close account"
+2. LEGAL RISK: Words like "lawsuit", "lawyer", "attorney", "sue", "court", "legal action"
+3. COMPLIANCE RISK: Profanity, threats, data breach mentions, harassment
 
-You MUST respond with ONLY this JSON format, no other text:
+DETERMINE:
+- risk_detected: true if ANY of the above risks found, false if none
+- severity: "none" if no risks, "low" for minor, "medium" for moderate, "high" for serious, "critical" for urgent
 
-{{
-    "risk_detected": <true if any risks found, else false>,
-    "severity": "<low|medium|high|critical>",
+RESPOND WITH THIS EXACT JSON STRUCTURE (no other text):
+{{{{
+    "risk_detected": <BOOLEAN true/false>,
+    "severity": "<none|low|medium|high|critical>",
     "flags": [
-        {{ "category": "<Churn|Legal|Compliance>", "confidence": "<low|medium|high>", "quote": "<relevant quote from transcript>" }},
-        ...
+        {{{{
+            "category": "<Churn|Legal|Compliance>",
+            "confidence": "<low|medium|high>",
+            "quote": "<exact words from transcript>"
+        }}}}
     ],
-    "summary": "<Brief risk assessment summary>"
-}}
+    "summary": "<ONE SENTENCE risk summary>"
+}}}}
 
-If no risks detected, return empty flags array and severity "low".
+IF NO RISKS FOUND, return: {{"risk_detected": false, "severity": "none", "flags": [], "summary": "No risks detected"}}
 """
         result = await self._invoke_llm(prompt)
+        
+        # Ensure required fields exist with defaults
+        if 'risk_detected' not in result:
+            result['risk_detected'] = False
+        if 'severity' not in result:
+            result['severity'] = 'none' if not result.get('risk_detected') else 'low'
+        if 'flags' not in result:
+            result['flags'] = []
+        if 'summary' not in result:
+            result['summary'] = 'No risks detected' if not result.get('risk_detected') else 'Risk analysis complete'
+        
         logger.info(f"⚠️ [RISK] Complete - Detected: {result.get('risk_detected', 'N/A')}, Severity: {result.get('severity', 'N/A')}")
         return result

@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 const ManagerDashboard = () => {
     const navigate = useNavigate();
     const [agents, setAgents] = useState([]);
@@ -47,7 +49,7 @@ const ManagerDashboard = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await axios.get('http://localhost:8000/api/v1/analysis/');
+                const res = await axios.get(`${API_BASE}/api/v1/analysis/`);
                 // Process real data if available
                 if (res.data && res.data.length > 0) {
                     // Map backend data to agent profiles
@@ -85,7 +87,7 @@ const ManagerDashboard = () => {
                     const agentsWithBuddies = await Promise.all(
                         processedAgents.map(async (agent) => {
                             try {
-                                const buddyRes = await axios.get(`http://localhost:8000/api/v1/buddy/agent/${agent.id}`);
+                                const buddyRes = await axios.get(`${API_BASE}/api/v1/buddy/agent/${agent.id}`);
                                 if (buddyRes.data.has_buddy && buddyRes.data.buddy_info) {
                                     return {
                                         ...agent,
@@ -189,7 +191,7 @@ const ManagerDashboard = () => {
     const handleBuddyAssignment = async (buddy) => {
         try {
             // Save to database via API
-            const response = await axios.post('http://localhost:8000/api/v1/buddy/assign', {
+            const response = await axios.post(`${API_BASE}/api/v1/buddy/assign`, {
                 mentee_id: selectedAgent.id,
                 mentor_id: buddy.id,
                 mentee_name: selectedAgent.name,
@@ -222,7 +224,7 @@ const ManagerDashboard = () => {
 
     const handleRecommendationSubmit = async () => {
         try {
-            await axios.post('http://localhost:8000/api/v1/recommendations/send', {
+            await axios.post(`${API_BASE}/api/v1/recommendations/send`, {
                 agent_id: selectedAgent.id,
                 agent_name: selectedAgent.name,
                 manager_id: 'mgr_001', // Mock manager ID

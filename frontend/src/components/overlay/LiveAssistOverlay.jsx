@@ -2,6 +2,15 @@ import React, { useEffect, useState, useRef } from 'react';
 import { AlertTriangle, Zap, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// WebSocket URL - uses ws:// for dev, wss:// for production
+const getWsUrl = (callId, agentId) => {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = import.meta.env.VITE_API_URL 
+        ? import.meta.env.VITE_API_URL.replace(/^https?:\/\//, '') 
+        : window.location.host;
+    return `${protocol}//${host}/api/v1/live/ws/${callId}/${agentId}`;
+};
+
 const LiveAssistOverlay = ({ callId, agentId, onTranscriptUpdate }) => {
     const [nudges, setNudges] = useState([]);
     const [status, setStatus] = useState("connecting");
@@ -11,7 +20,7 @@ const LiveAssistOverlay = ({ callId, agentId, onTranscriptUpdate }) => {
         if (!callId) return;
 
         // Connect to WebSocket
-        const wsUrl = `ws://localhost:8000/api/v1/live/ws/${callId}/${agentId}`;
+        const wsUrl = getWsUrl(callId, agentId);
         const ws = new WebSocket(wsUrl);
         wsRef.current = ws;
 

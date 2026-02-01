@@ -16,35 +16,53 @@ class QAScoringAgent(BaseAgent):
         logger.info(f"📊 [QA] Evaluating call quality ({len(transcript)} chars)")
         
         prompt = f"""
-Evaluate the following customer service call transcript for Quality Assurance.
+[TASK: QA SCORING - Return numerical scores ONLY]
 
-TRANSCRIPT:
+You are evaluating a CUSTOMER SERVICE CALL for Quality Assurance.
+
+TRANSCRIPT TO EVALUATE:
+---
 {transcript}
+---
 
-SCORING CRITERIA (Total 100 points):
-- Greeting & Closing (10 points): Professional opening and closing of the call
-- Empathy & Tone (20 points): Showing understanding, active listening, appropriate tone
-- Solution Accuracy (40 points): Correctly addressing the customer's issue, providing accurate information
-- Efficiency (10 points): Handling the call without unnecessary delays
-- Compliance (20 points): Following proper procedures, verification, legal requirements
+SCORING RUBRIC (Maximum 100 points total):
+1. Greeting & Closing (max 10 points): Did agent greet professionally and close properly?
+2. Empathy & Tone (max 20 points): Did agent show understanding and use appropriate tone?
+3. Solution Accuracy (max 40 points): Did agent correctly address the issue with accurate info?
+4. Efficiency (max 10 points): Was the call handled without unnecessary delays?
+5. Compliance (max 20 points): Did agent follow verification and proper procedures?
 
-Score each category and provide an overall assessment.
+CALCULATE: Add up all category scores for total_score (0-100).
 
-You MUST respond with ONLY this JSON format, no other text:
-
-{{
-    "total_score": <0-100 integer>,
-    "breakdown": {{
-        "greeting": <0-10 integer>,
-        "empathy": <0-20 integer>,
-        "solution": <0-40 integer>,
-        "efficiency": <0-10 integer>,
-        "compliance": <0-20 integer>
-    }},
-    "critical_fail": <true if any major issue like rudeness or misinformation, else false>,
-    "comments": "<Brief summary of the agent's performance>"
-}}
+RESPOND WITH THIS EXACT JSON STRUCTURE (no other text):
+{{{{
+    "total_score": <INTEGER 0-100>,
+    "breakdown": {{{{
+        "greeting": <INTEGER 0-10>,
+        "empathy": <INTEGER 0-20>,
+        "solution": <INTEGER 0-40>,
+        "efficiency": <INTEGER 0-10>,
+        "compliance": <INTEGER 0-20>
+    }}}},
+    "critical_fail": <BOOLEAN true/false>,
+    "comments": "<ONE SENTENCE summary>"
+}}}}
 """
         result = await self._invoke_llm(prompt)
+        
+        # Ensure total_score exists
+        if 'total_score' not in result and 'breakdown' in result:
+            breakdown = result.get('breakdown', {})
+            result['total_score'] = sum([
+                breakdown.get('greeting', 0),
+                breakdown.get('empathy', 0),
+                breakdown.get('solution', 0),
+                breakdown.get('efficiency', 0),
+                breakdown.get('compliance', 0)
+            ])
+        elif 'total_score' not in result:
+            # Fallback: try to extract from adherence_score if model confused
+            result['total_score'] = result.get('adherence_score', 50)
+        
         logger.info(f"📊 [QA] Complete - Total Score: {result.get('total_score', 'N/A')}, Critical Fail: {result.get('critical_fail', 'N/A')}")
         return result

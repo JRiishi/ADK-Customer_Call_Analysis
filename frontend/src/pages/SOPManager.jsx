@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Book, Plus, Trash2, Edit3, Save, X, Search, FileText, CheckCircle } from 'lucide-react';
 import axios from 'axios';
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 const SOPManager = () => {
     const [sops, setSops] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -9,7 +11,7 @@ const SOPManager = () => {
     const [editingSop, setEditingSop] = useState(null);
     const [formData, setFormData] = useState({ title: '', department: 'General', content: '', mandatory_keywords: '' });
 
-    const API_URL = 'http://localhost:8000/api/v1/sop';
+    const API_URL = `${API_BASE}/api/v1/sop`;
 
     const fetchSops = async () => {
         try {

@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import axios from 'axios';
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 const SupervisorDashboard = () => {
     const navigate = useNavigate();
     const [agents, setAgents] = useState([]);
@@ -49,7 +51,7 @@ const SupervisorDashboard = () => {
 
     const fetchRecommendations = async () => {
         try {
-            const res = await axios.get('http://localhost:8000/api/v1/recommendations/all');
+            const res = await axios.get(`${API_BASE}/api/v1/recommendations/all`);
             setRecommendations(res.data);
         } catch (err) {
             console.error('Error fetching recommendations:', err);
@@ -58,7 +60,7 @@ const SupervisorDashboard = () => {
 
     const handleUpdateRecStatus = async (id, status) => {
         try {
-            await axios.patch(`http://localhost:8000/api/v1/recommendations/status/${id}?status=${status}`);
+            await axios.patch(`${API_BASE}/api/v1/recommendations/status/${id}?status=${status}`);
             fetchRecommendations();
         } catch (err) {
             console.error('Error updating status:', err);
@@ -68,7 +70,7 @@ const SupervisorDashboard = () => {
     const fetchAnalyticsData = async () => {
         try {
             // Fetch all call data from database
-            const res = await axios.get('http://localhost:8000/api/v1/analysis/');
+            const res = await axios.get(`${API_BASE}/api/v1/analysis/`);
 
             if (res.data && res.data.length > 0) {
                 setCallData(res.data);

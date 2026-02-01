@@ -79,15 +79,32 @@ class OrchestratorAgent:
                 logger.info(f"   ✅ {key}: OK")
         logger.info("-" * 50)
 
-        # Extract metrics with safe defaults
+        # Extract metrics with safe defaults and multiple fallbacks
         sentiment_data = clean_results.get("sentiment", {})
         sop_data = clean_results.get("sop_compliance", {})
         qa_data = clean_results.get("qa_score", {})
         risk_data = clean_results.get("risk_analysis", {})
         
-        sentiment_score = sentiment_data.get("score", 0)
-        sop_score = sop_data.get("adherence_score", 0)
-        qa_score = qa_data.get("total_score", 0)
+        # Sentiment: prefer 'score', fallback to 'overall_score' or 0
+        sentiment_score = sentiment_data.get("score") or sentiment_data.get("overall_score") or 0
+        
+        # SOP: prefer 'adherence_score', fallback to 'overall_score' or 0
+        sop_score = sop_data.get("adherence_score") or sop_data.get("overall_score") or 0
+        
+        # QA: prefer 'total_score', fallback to 'adherence_score', 'overall_score', or calculate from breakdown
+        qa_score = qa_data.get("total_score") or qa_data.get("adherence_score") or qa_data.get("overall_score")
+        if qa_score is None and qa_data.get("breakdown"):
+            breakdown = qa_data.get("breakdown", {})
+            qa_score = sum([
+                breakdown.get("greeting", 0),
+                breakdown.get("empathy", 0),
+                breakdown.get("solution", 0),
+                breakdown.get("efficiency", 0),
+                breakdown.get("compliance", 0)
+            ])
+        qa_score = qa_score or 0
+        
+        # Risk: check 'risk_detected' boolean
         risk_detected = risk_data.get("risk_detected", False)
         risk_severity = risk_data.get("severity", "none")
         

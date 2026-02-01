@@ -5,6 +5,8 @@ import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer, CartesianGrid } f
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 const AgentProfile = () => {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -16,7 +18,7 @@ const AgentProfile = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/api/v1/agent/profile/${agentId}`);
+                const res = await axios.get(`${API_BASE}/api/v1/agent/profile/${agentId}`);
                 if (res.data) {
                     setProfile(res.data);
                 }
@@ -60,7 +62,7 @@ const AgentProfile = () => {
         // Fetch buddy information
         const fetchBuddyInfo = async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/api/v1/buddy/agent/${agentId}`);
+                const res = await axios.get(`${API_BASE}/api/v1/buddy/agent/${agentId}`);
                 if (res.data) {
                     setBuddyInfo(res.data);
                 }
